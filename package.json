@@ -10,7 +10,8 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
-    "vue-material-design-icons": "^4.11.0"
+    "vue-material-design-icons": "^4.11.0",
+    "vue-swing": "^0.0.10"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
