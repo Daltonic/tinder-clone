@@ -1,15 +1,25 @@
 <template>
-    <div>
-        <h4>Hello World</h4>
-    </div>
+  <div class="sidebar__wrapper">
+    <CometChatUserListWithMessages />
+  </div>
 </template>
 
 <script>
-    export default {
-        
-    }
+import { CometChatUserListWithMessages } from "../cometchat-pro-vue-ui-kit";
+export default {
+  components: {
+    CometChatUserListWithMessages,
+  },
+};
 </script>
 
 <style scoped>
-
+.sidebar__header {
+  background: linear-gradient(
+    90deg,
+    rgba(233, 12, 119, 1) 0%,
+    rgba(241, 96, 89, 1) 100%
+  );
+  padding: 20px;
+}
 </style>
