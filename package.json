@@ -10,6 +10,9 @@
   "dependencies": {
     "@cometchat-pro/chat": "^2.2.1",
     "core-js": "^3.6.5",
+    "dateformat": "^4.4.1",
+    "emoji-mart-vue-fast": "^7.0.7",
+    "twemoji": "^13.0.1",
     "vue": "^2.6.11",
     "vue-material-design-icons": "^4.11.0",
     "vue-swing": "^0.0.10"
