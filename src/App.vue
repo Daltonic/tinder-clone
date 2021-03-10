@@ -3,9 +3,7 @@
     <div class="wrapper">
       <div class="content-wrapper">
         <div class="content">
-          <MainHeader/>
-          <TinderCards/>
-          <SwipeButtons/>
+          <Home/>
         </div>
       </div>
       <div class="sidebar">
@@ -16,16 +14,12 @@
 </template>
 
 <script>
-import MainHeader from './components/MainHeader'
-import TinderCards from './components/TinderCards'
-import SwipeButtons from './components/SwipeButtons'
+import Home from './views/Home'
 import SideBar from './components/SideBar'
 export default {
   name: 'app',
   components: {
-    MainHeader,
-    TinderCards,
-    SwipeButtons,
+    Home,
     SideBar,
   }
 }
