@@ -18,7 +18,22 @@
       </div>
 
       <div class="user__box">
-        <router-link class="forget__link" to="/forget">Forget Password</router-link>
+        <input
+          type="number"
+          required
+          v-model="form.age"
+          min="18"
+          max="60"
+          minlength="2"
+          maxlength="3"
+        />
+        <label>Age</label>
+      </div>
+
+      <div class="user__box">
+        <router-link class="forget__link" to="/forget"
+          >Forget Password</router-link
+        >
       </div>
 
       <button type="submit">
@@ -35,6 +50,7 @@
 
 <script>
 import { auth } from "../firebase";
+import { CometChat } from "@cometchat-pro/chat";
 export default {
   data: () => ({
     valid: true,
@@ -43,7 +59,9 @@ export default {
       email: "",
       password: "",
       fullname: "",
+      age: "",
     },
+    temp: null
   }),
 
   methods: {
@@ -52,14 +70,34 @@ export default {
       auth
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then((res) => {
-          return res.user.updateProfile({
+          res.user.updateProfile({
             displayName: this.form.fullname,
-          });
+          }).then(() => this.signInWithCometChat(res.user.uid))
         })
-        .then(() => this.$router.push({ name: "home" }))
         .catch((error) => console.log(error))
         .finally(() => (this.requesting = false));
+
     },
+    signInWithCometChat(uid) {
+      const apiKey = process.env.VUE_APP_KEY;
+      const age = this.form.age;
+      const firstName = this.form.fullname.split(' ')[0];
+      const name = `${firstName}, ${age}`;
+
+      const user = new CometChat.User(uid);
+
+      user.setName(name);
+
+      CometChat.createUser(user, apiKey).then(
+        () => {
+          CometChat.login(uid, apiKey)
+          .then(() => this.$router.push({ name: "home" }))
+        },
+        (error) => {
+          console.log("error", error);
+        }
+      );
+    }
   },
 };
 </script>
@@ -184,7 +222,6 @@ html {
   margin-left: 5px;
   padding: 10px;
 }
-
 
 .register__box form .links:hover {
   background: #e90d77;

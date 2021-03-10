@@ -6,14 +6,16 @@
         <input type="email" required v-model="form.email" />
         <label>Email</label>
       </div>
-      
+
       <div class="user__box">
         <input type="password" required v-model="form.password" />
         <label>Password</label>
       </div>
 
       <div class="user__box">
-        <router-link class="forget__link" to="/forget">Forget Password</router-link>
+        <router-link class="forget__link" to="/forget"
+          >Forget Password</router-link
+        >
       </div>
 
       <button type="submit">
@@ -30,6 +32,7 @@
 
 <script>
 import { auth } from "../firebase";
+import { CometChat } from "@cometchat-pro/chat";
 export default {
   data: () => ({
     valid: true,
@@ -45,10 +48,16 @@ export default {
       this.requesting = true;
       auth
         .signInWithEmailAndPassword(this.form.email, this.form.password)
-        .then(() => this.$router.push({ name: "home" }))
+        .then((res) => this.loginCometChat(res.user.uid))
         .catch((error) => console.log(error))
         .finally(() => (this.requesting = false));
     },
+    loginCometChat(uid) {
+      const apiKey = process.env.VUE_APP_KEY;
+      CometChat.login(uid, apiKey)
+        .then(() => this.$router.push({ name: "home" }))
+        .catch((error) => console.log(error))
+    }
   },
 };
 </script>
@@ -173,7 +182,6 @@ html {
   margin-left: 5px;
   padding: 10px;
 }
-
 
 .login__box form .links:hover {
   background: #e90d77;

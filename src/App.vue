@@ -8,6 +8,7 @@
       </div>
       <div v-if="isLoggedIn" class="sidebar">
         <SideBar/>
+        <button @click="logOut">Logout</button>
       </div>
     </div>
   </div>
@@ -31,6 +32,15 @@ export default {
         this.isLoggedIn = false;
       }
     });
+  },
+  methods: {
+    logOut() {
+      auth
+        .signOut()
+        .then(() => (this.isLoggedIn = false))
+        .catch((error) => console.log(error.message))
+        .finally(() => this.$router.push({ name: "login" }));
+    },
   },
   components: {
     SideBar,
