@@ -3,10 +3,10 @@
     <div class="wrapper">
       <div class="content-wrapper">
         <div class="content">
-          <Home/>
+          <router-view></router-view>
         </div>
       </div>
-      <div class="sidebar">
+      <div v-if="isLoggedIn" class="sidebar">
         <SideBar/>
       </div>
     </div>
@@ -14,12 +14,25 @@
 </template>
 
 <script>
-import Home from './views/Home'
 import SideBar from './components/SideBar'
+import { auth } from "./firebase";
 export default {
   name: 'app',
+  data() {
+    return {
+      isLoggedIn: false,
+    }
+  },
+  created() {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.isLoggedIn = true;
+      } else {
+        this.isLoggedIn = false;
+      }
+    });
+  },
   components: {
-    Home,
     SideBar,
   }
 }
@@ -64,14 +77,6 @@ html {
   background: #fff;
   color: #eee;
   min-height: 100vh;
-}
-
-a{
-  display: block;
-  text-align:center;
-  margin: 10px auto;
-  width: 100%;
-  color: #2c3e50;
 }
 
 @media only screen and (max-width: 768px) {
