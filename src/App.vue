@@ -1,18 +1,21 @@
 <template>
   <div id="app">
     <MainHeader/>
-    <TinderCard/>
+    <TinderCards/>
+    <SwipeButtons/>
   </div>
 </template>
 
 <script>
 import MainHeader from './components/MainHeader'
-import TinderCard from './components/TinderCard'
+import TinderCards from './components/TinderCards'
+import SwipeButtons from './components/SwipeButtons'
 export default {
   name: 'app',
   components: {
     MainHeader,
-    TinderCard,
+    TinderCards,
+    SwipeButtons,
   }
 }
 </script>
@@ -24,5 +27,9 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  background-color: #f9f9f9;
 }
 </style>

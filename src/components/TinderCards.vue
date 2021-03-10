@@ -21,7 +21,7 @@
 <script>
 import VueSwing from "vue-swing";
 export default {
-  name: "tinder-card",
+  name: "tinder-cards",
   data() {
     return {
       people: [
@@ -86,7 +86,6 @@ export default {
     swipped(person) {
       const index = this.people.findIndex((p) => p.id == person.id);
       this.people.splice(index, 1);
-      console.log(`Removing: ${person.name}`);
     },
   },
 };
@@ -96,12 +95,11 @@ export default {
 .card {
   position: relative;
   background-color: #fff;
-  width: 600px;
+  width: 250px;
   padding: 20px;
   max-width: 85vw;
   height: 50vh;
-  box-shadow: 0px 18px 53px 0px rgba(0, 0, 0, 0.3);
-  border-radius: 20px;
+  border-radius: 9px;
   background-size: cover;
   background-position: center;
 }
