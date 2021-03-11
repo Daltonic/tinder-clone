@@ -55,7 +55,7 @@ export default {
 
 .swipe__icons .material-design-icon__svg {
   background-color: white;
-  box-shadow: 0px 10px 53px 0px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.2) !important;
   border-radius: 30px;
   padding: 10px;
 }

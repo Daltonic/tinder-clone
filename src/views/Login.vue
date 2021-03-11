@@ -62,7 +62,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 html {
   background: linear-gradient(#e90d77, #f15f59);
 }
