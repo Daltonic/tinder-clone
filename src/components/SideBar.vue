@@ -32,7 +32,7 @@
     </div>
     <div class="sidebar__messages">
       <h4 class="message__title">Messages</h4>
-      <div class="sidebar__message">
+      <div v-for="m in 10" :key="m" class="sidebar__message">
         <div class="message__left">
           <CometChatAvatar />
           <CometChatUserPresence />
@@ -169,6 +169,8 @@ export default {
 
 .sidebar__messages {
   padding: 20px 10px;
+  height: 400px;
+  overflow-y: scroll;
 }
 
 .message__title {
