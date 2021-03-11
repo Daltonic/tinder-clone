@@ -32,13 +32,13 @@
     </div>
     <div class="sidebar__messages">
       <h4 class="message__title">Messages</h4>
-      <div v-for="m in 10" :key="m" class="sidebar__message">
+      <div v-for="user in users" :key="user.uid" class="sidebar__message">
         <div class="message__left">
-          <CometChatAvatar />
-          <CometChatUserPresence />
+          <CometChatAvatar :image="user.avatar || nameToImage(user.name)" />
+          <CometChatUserPresence :status="user.status" />
         </div>
         <div class="message__right">
-          <h4 class="message__name">Kelvin</h4>
+          <h4 class="message__name">{{user.name}}</h4>
           <p class="message__content">Some message</p>
         </div>
       </div>
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { CometChat } from "@cometchat-pro/chat";
 import {
   CometChatAvatar,
   CometChatUserPresence,
@@ -66,12 +67,14 @@ export default {
     return {
       isLoggedIn: false,
       search: false,
+      users: []
     };
   },
   created() {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.isLoggedIn = true;
+        this.getUsers()
       } else {
         this.isLoggedIn = false;
       }
@@ -85,6 +88,40 @@ export default {
         .catch((error) => console.log(error.message))
         .finally(() => this.$router.push({ name: "login" }));
     },
+    getUsers() {
+      let limit = 30;
+      let usersRequest = new CometChat.UsersRequestBuilder().setLimit(limit).build();
+
+      usersRequest.fetchNext().then(
+        userList => this.users = userList,
+        error => console.log("User list fetching failed with error:", error)
+      );
+    },
+    nameToImage(name) {
+      let initials = name.match(/\b(\w)/g)[0];
+      let randomColor = '#' + (0x1000000|(Math.random()*0xFFFFFF)).toString(16).substr(1,6);
+
+      let canvas = document.createElement("canvas");
+      let context = canvas.getContext("2d");
+      canvas.width = canvas.height = 100;
+
+      context.fillStyle = randomColor;
+      context.beginPath();
+      context.ellipse(
+        canvas.width/2, canvas.height/2,
+        canvas.width/2, canvas.height/2,
+        0, 0, Math.PI * 2
+      );
+      context.fill();
+
+      context.font = (canvas.height/3) + "px serif";
+      context.fillStyle = "#fff";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText(initials, canvas.width/2, canvas.height/2);
+          
+      return canvas.toDataURL();
+    }
   },
   components: {
     CometChatAvatar,
@@ -181,10 +218,16 @@ export default {
 .sidebar__message {
   display: flex;
   align-items: center;
+  margin: 20px 0;
 }
 
 .message__left {
   width: 70px;
+  height: 70px;
+}
+
+.message__left img {
+  object-fit: cover;
 }
 
 .message__right {
