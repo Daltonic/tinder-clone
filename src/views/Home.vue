@@ -7,16 +7,36 @@
         <SwipeButtons />
       </div>
     </div>
-    <SideBar />
+    <SideBar :users="users" />
   </div>
 </template>
 
 <script>
+import { CometChat } from "@cometchat-pro/chat";
 import MainHeader from "../components/MainHeader";
 import TinderCards from "../components/TinderCards";
 import SwipeButtons from "../components/SwipeButtons";
 import SideBar from "../components/SideBar";
 export default {
+  name: 'home',
+  data() {
+    return {
+      users: []
+    }
+  },
+  created() {
+    this.getUsers()
+  },
+  methods: {
+    getUsers() {
+      let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
+
+      usersRequest.fetchNext().then(
+        userList => this.users = userList,
+        error => console.log("User list fetching failed with error:", error)
+      );
+    }
+  },
   components: {
     MainHeader,
     TinderCards,

@@ -10,13 +10,12 @@
       <div class="header__right">
         <AccountSearchIcon
           class="header__icon"
-          @click="search = !search"
           :size="30"
           fillColor="#ffffff"
         />
       </div>
     </div>
-    <div v-if="search" class="sidebar__search">
+    <div class="sidebar__search">
       <input class="search__input" type="search" placeholder="Search" />
     </div>
     <div class="sidebar__discover">
@@ -34,12 +33,14 @@
       <h4 class="message__title">Messages</h4>
       <div v-for="user in users" :key="user.uid" class="sidebar__message">
         <div class="message__left">
-          <CometChatAvatar :image="user.avatar || nameToImage(user.name)" />
+          <CometChatAvatar :image="user.avatar" />
           <CometChatUserPresence :status="user.status" />
         </div>
         <div class="message__right">
-          <h4 class="message__name">{{user.name}}</h4>
-          <p class="message__content">Some message</p>
+          <h4 class="message__name">{{ user.name }}</h4>
+          <p class="message__content">
+            {{ user.metadata.rawMetadata || "Hello I'm using tinder!" }}
+          </p>
         </div>
       </div>
     </div>
@@ -54,7 +55,6 @@
 </template>
 
 <script>
-import { CometChat } from "@cometchat-pro/chat";
 import {
   CometChatAvatar,
   CometChatUserPresence,
@@ -63,20 +63,34 @@ import AccountSearchIcon from "vue-material-design-icons/AccountSearch.vue";
 import CardsIcon from "vue-material-design-icons/Cards.vue";
 import { auth } from "../firebase";
 export default {
+  name: "sidebar",
+  props: {
+    users: {
+      type: [Object, Array],
+      default: function () {
+        return [
+          {
+            uid: "1",
+            name: "Fullname",
+            avatar:
+              "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/newborn-baby-boy-sleeping-peacefully-wearing-knit-royalty-free-image-1589459736.jpg?crop=0.669xw:1.00xh;0.228xw,0&resize=640:*",
+            metadata: { rawMetadata: "Some Text Here!" },
+          },
+        ];
+      },
+    },
+  },
   data() {
     return {
       isLoggedIn: false,
-      search: false,
-      users: [],
-      avatar: ""
+      avatar: "",
     };
   },
   created() {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.isLoggedIn = true;
-        this.avatar = user.photoURL
-        this.getUsers()
+        this.avatar = user.photoURL;
       } else {
         this.isLoggedIn = false;
       }
@@ -90,40 +104,6 @@ export default {
         .catch((error) => console.log(error.message))
         .finally(() => this.$router.push({ name: "login" }));
     },
-    getUsers() {
-      let limit = 30;
-      let usersRequest = new CometChat.UsersRequestBuilder().setLimit(limit).build();
-
-      usersRequest.fetchNext().then(
-        userList => this.users = userList,
-        error => console.log("User list fetching failed with error:", error)
-      );
-    },
-    nameToImage(name) {
-      let initials = name.match(/\b(\w)/g)[0];
-      let randomColor = '#' + (0x1000000|(Math.random()*0xFFFFFF)).toString(16).substr(1,6);
-
-      let canvas = document.createElement("canvas");
-      let context = canvas.getContext("2d");
-      canvas.width = canvas.height = 100;
-
-      context.fillStyle = randomColor;
-      context.beginPath();
-      context.ellipse(
-        canvas.width/2, canvas.height/2,
-        canvas.width/2, canvas.height/2,
-        0, 0, Math.PI * 2
-      );
-      context.fill();
-
-      context.font = (canvas.height/3) + "px serif";
-      context.fillStyle = "#fff";
-      context.textAlign = "center";
-      context.textBaseline = "middle";
-      context.fillText(initials, canvas.width/2, canvas.height/2);
-          
-      return canvas.toDataURL();
-    }
   },
   components: {
     CometChatAvatar,
