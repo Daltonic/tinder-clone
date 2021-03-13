@@ -66,7 +66,7 @@ export default {
             ...user,
             fullname: user.name,
             avatar: user.avatar || "",
-            metadata: user.metadata.rawMetadata || "",
+            metadata: user.metadata?.rawMetadata || "",
           };
         },
         (error) => {
@@ -85,7 +85,7 @@ export default {
       user.setMetadata(this.form.metadata);
 
       CometChat.updateUser(user, apiKey).then(
-        (user) => console.log("user updated", user),
+        () => this.$router.push({name: 'home'}),
         (error) => console.log("error", error)
       );
     },

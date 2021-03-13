@@ -8,10 +8,18 @@ Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const requiresProfile = to.matched.some((record) => record.meta.requiresProfile)
 
   if (requiresAuth && !auth.currentUser) {
     console.log('You are not authorized to access this area.')
     next('login')
+  } else {
+    next()
+  }
+  
+  if (requiresProfile && !(auth.currentUser.photoURL != null)) {
+    console.log('You must first complete your profile.')
+    next('profile')
   } else {
     next()
   }
