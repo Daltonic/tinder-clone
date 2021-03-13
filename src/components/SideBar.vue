@@ -3,7 +3,7 @@
     <div class="sidebar__header">
       <div class="header__left">
         <div class="sidebar__avatar">
-          <CometChatAvatar />
+          <CometChatAvatar :image="avatar" />
         </div>
         <router-link to="/profile">My Profile</router-link>
       </div>
@@ -67,13 +67,15 @@ export default {
     return {
       isLoggedIn: false,
       search: false,
-      users: []
+      users: [],
+      avatar: ""
     };
   },
   created() {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.isLoggedIn = true;
+        this.avatar = user.photoURL
         this.getUsers()
       } else {
         this.isLoggedIn = false;
@@ -153,6 +155,15 @@ export default {
   padding: 10px;
   display: flex;
   justify-content: space-between;
+}
+
+.sidebar__avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar__avatar img {
+  object-fit: cover;
 }
 
 .sidebar__discover {

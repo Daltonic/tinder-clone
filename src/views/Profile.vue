@@ -3,17 +3,17 @@
     <h2>Profile</h2>
     <form @submit.prevent="onSubmit">
       <div class="user__box">
-        <input type="text" required v-model="form.fullname" />
+        <input type="text" required minlength="6" v-model="form.fullname" />
         <label>Fullname</label>
       </div>
 
       <div class="user__box">
-        <input type="text" required v-model="form.avatar" />
+        <input type="text" required minlength="10" v-model="form.avatar" />
         <label>Image URL</label>
       </div>
 
       <div class="user__box">
-        <input type="text" required v-model="form.description" />
+        <input type="text" required minlength="10" v-model="form.metadata" />
         <label>Description</label>
       </div>
 
@@ -31,17 +31,74 @@
 </template>
 
 <script>
+import { CometChat } from "@cometchat-pro/chat";
+import { auth } from "../firebase";
 export default {
+  name: "profile",
   data() {
     return {
       requesting: false,
       form: {
         fullname: "",
         avatar: "",
-        description: "",
+        metadata: "",
       },
     };
   },
+  created() {
+    this.getUser();
+  },
+  methods: {
+    onSubmit() {
+      auth.currentUser
+        .updateProfile({
+          photoURL: this.form.avatar,
+          displayName: this.form.fullname,
+        })
+        .then(() => this.setUser())
+        .catch((error) => console.log("Error updating user:", error));
+    },
+    getUser() {
+      const uid = auth.currentUser.uid;
+      CometChat.getUser(uid).then(
+        (user) => {
+          this.form = {
+            ...user,
+            fullname: user.name,
+            avatar: user.avatar || "",
+            metadata: user.metadata.rawMetadata || "",
+          };
+        },
+        (error) => {
+          console.log("User details fetching failed with error:", error);
+        }
+      );
+    },
+    setUser() {
+      const apiKey = process.env.VUE_APP_KEY;
+      const uid = auth.currentUser.uid;
+
+      var user = new CometChat.User(uid);
+
+      user.setName(this.form.fullname);
+      user.setAvatar(this.form.avatar);
+      user.setMetadata(this.form.metadata);
+
+      CometChat.updateUser(user, apiKey).then(
+        (user) => console.log("user updated", user),
+        (error) => console.log("error", error)
+      );
+    },
+  },
+  //   computed: {
+  //     validated() {
+  //       return (
+  //         this.form.fullname.length >= 5 &&
+  //         this.form.avatar.length >= 10 &&
+  //         this.form.description.length >= 10
+  //       );
+  //     },
+  //   },
 };
 </script>
 

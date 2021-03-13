@@ -7,10 +7,9 @@ import { auth } from './firebase'
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-  const authenticatedUser = auth.currentUser
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
-  if (requiresAuth && !authenticatedUser) {
+  if (requiresAuth && !auth.currentUser) {
     console.log('You are not authorized to access this area.')
     next('login')
   } else {
