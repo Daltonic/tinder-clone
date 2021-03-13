@@ -3,8 +3,7 @@
     <div class="content-wrapper">
       <div class="content">
         <MainHeader />
-        <TinderCards />
-        <SwipeButtons />
+        <TinderCards :users="users" />
       </div>
     </div>
     <SideBar :users="users" />
@@ -15,7 +14,6 @@
 import { CometChat } from "@cometchat-pro/chat";
 import MainHeader from "../components/MainHeader";
 import TinderCards from "../components/TinderCards";
-import SwipeButtons from "../components/SwipeButtons";
 import SideBar from "../components/SideBar";
 export default {
   name: 'home',
@@ -40,7 +38,6 @@ export default {
   components: {
     MainHeader,
     TinderCards,
-    SwipeButtons,
     SideBar,
   },
 };

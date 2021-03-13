@@ -2,26 +2,66 @@
   <div class="tinder__card">
     <div class="tinder__card__container">
       <vue-swing
-        v-for="person in people"
-        :key="person.id"
-        @throwout="swipped(person)"
+        v-for="user in users"
+        :key="user.id"
+        @throwout="swipped(user)"
         :config="config"
         class="swipe"
       >
-        <div class="card" :style="{ 'background-image': `url(${person.url})` }">
+        <div
+          class="card"
+          :style="{ 'background-image': `url(${user.avatar})` }"
+        >
           <div class="card__content">
-            <h3>{{ person.name }}</h3>
+            <h3>{{ user.name }}, {{ user.metadata.age }}</h3>
           </div>
         </div>
       </vue-swing>
+
+      <div class="swipe__icons">
+        <CloseIcon
+          :size="30"
+          fillColor="#ec5e6f"
+          class="swipe__icon swipe__icon__close"
+        />
+        <StarIcon
+          :size="30"
+          fillColor="#62b4f9"
+          class="swipe__icon swipe__icon__star"
+        />
+        <HeartIcon
+          :size="30"
+          fillColor="#76e2b3"
+          class="swipe__icon swipe__icon__heart"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import VueSwing from "vue-swing";
+import CloseIcon from "vue-material-design-icons/Close.vue";
+import StarIcon from "vue-material-design-icons/Star.vue";
+import HeartIcon from "vue-material-design-icons/Heart.vue";
 export default {
   name: "tinder-cards",
+  props: {
+    users: {
+      type: [Object, Array],
+      default: function () {
+        return [
+          {
+            uid: "1",
+            name: "Fullname",
+            avatar:
+              "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/newborn-baby-boy-sleeping-peacefully-wearing-knit-royalty-free-image-1589459736.jpg?crop=0.669xw:1.00xh;0.228xw,0&resize=640:*",
+            metadata: { age: "21", rawMetadata: "Some Text Here!" },
+          },
+        ];
+      },
+    },
+  },
   data() {
     return {
       people: [
@@ -81,11 +121,14 @@ export default {
   },
   components: {
     VueSwing,
+    CloseIcon,
+    StarIcon,
+    HeartIcon,
   },
   methods: {
-    swipped(person) {
-      const index = this.people.findIndex((p) => p.id == person.id);
-      this.people.splice(index, 1);
+    swipped(user) {
+      const index = this.users.findIndex((u) => u.uid == user.uid);
+      this.users.splice(index, 1);
     },
   },
 };
@@ -124,5 +167,32 @@ export default {
   bottom: 0;
   margin: 10px;
   color: #fff;
+}
+
+.swipe__icons__container {
+  display: flex;
+  justify-content: center;
+}
+
+.swipe__icons {
+  position: fixed;
+  bottom: 5vh;
+  display: flex;
+  width: 250px;
+  justify-content: space-evenly;
+}
+
+.swipe__icon__close:hover,
+.swipe__icon__star:hover,
+.swipe__icon__heart:hover {
+  transform: scale(1.06);
+  transition: all 0.2s ease-in-out;
+}
+
+.swipe__icons .material-design-icon__svg {
+  background-color: white;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 30px;
+  padding: 10px;
 }
 </style>
