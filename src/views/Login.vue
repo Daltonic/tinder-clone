@@ -23,7 +23,7 @@
         <span></span>
         <span></span>
         <span></span>
-        Login
+        {{ requesting ? "Saving..." : "Login" }}
       </button>
       <router-link class="links" to="/register">Register</router-link>
     </form>
@@ -35,7 +35,6 @@ import { auth } from "../firebase";
 import { CometChat } from "@cometchat-pro/chat";
 export default {
   data: () => ({
-    valid: true,
     requesting: false,
     form: {
       email: "",
@@ -50,13 +49,13 @@ export default {
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then((res) => this.loginCometChat(res.user.uid))
         .catch((error) => console.log(error))
-        .finally(() => (this.requesting = false));
     },
     loginCometChat(uid) {
       const apiKey = process.env.VUE_APP_KEY;
       CometChat.login(uid, apiKey)
         .then(() => this.$router.push({ name: "home" }))
         .catch((error) => console.log(error))
+        .finally(() => (this.requesting = false));
     }
   },
 };

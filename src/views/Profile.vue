@@ -13,7 +13,26 @@
       </div>
 
       <div class="user__box">
-        <input type="text" required minlength="10" v-model="form.metadata" />
+        <input
+          type="number"
+          required
+          v-model="form.age"
+          min="18"
+          max="60"
+          minlength="2"
+          maxlength="3"
+        />
+        <label>Age</label>
+      </div>
+
+      <div class="user__box">
+        <input
+          type="text"
+          required
+          minlength="10"
+          maxlength="50"
+          v-model="form.metadata"
+        />
         <label>Description</label>
       </div>
 
@@ -22,7 +41,7 @@
         <span></span>
         <span></span>
         <span></span>
-        Update
+        {{ requesting ? "Saving..." : "Update" }}
       </button>
 
       <router-link class="links" to="/">Back</router-link>
@@ -41,6 +60,7 @@ export default {
       form: {
         fullname: "",
         avatar: "",
+        age: "",
         metadata: "",
       },
     };
@@ -50,29 +70,28 @@ export default {
   },
   methods: {
     onSubmit() {
+      this.requesting = true;
       auth.currentUser
         .updateProfile({
           photoURL: this.form.avatar,
           displayName: this.form.fullname,
         })
         .then(() => this.setUser())
-        .catch((error) => console.log("Error updating user:", error));
+        .catch((error) => console.log("Error updating user:", error))
     },
     getUser() {
       const uid = auth.currentUser.uid;
-      CometChat.getUser(uid).then(
-        (user) => {
+      CometChat.getUser(uid)
+        .then((user) => {
           this.form = {
             ...user,
             fullname: user.name,
             avatar: user.avatar || "",
             metadata: user.metadata?.rawMetadata || "",
+            age: user.metadata?.age || "",
           };
-        },
-        (error) => {
-          console.log("User details fetching failed with error:", error);
-        }
-      );
+        })
+        .catch((error) => console.log(error));
     },
     setUser() {
       const apiKey = process.env.VUE_APP_KEY;
@@ -82,12 +101,12 @@ export default {
 
       user.setName(this.form.fullname);
       user.setAvatar(this.form.avatar);
-      user.setMetadata(this.form.metadata);
+      user.setMetadata({ rawMetadata: this.form.metadata, age: this.form.age });
 
-      CometChat.updateUser(user, apiKey).then(
-        () => this.$router.push({name: 'home'}),
-        (error) => console.log("error", error)
-      );
+      CometChat.updateUser(user, apiKey)
+      .then(() => this.$router.push({ name: "home" }))
+      .catch((error) => console.log(error))
+      .finally(() => this.requesting = false);
     },
   },
   //   computed: {

@@ -3,31 +3,18 @@
     <h2>Register</h2>
     <form @submit.prevent="onSubmit">
       <div class="user__box">
-        <input type="text" required v-model="form.fullname" />
+        <input type="text" required minlength="5" v-model="form.fullname" />
         <label>Fullname</label>
       </div>
 
       <div class="user__box">
-        <input type="email" required v-model="form.email" />
+        <input type="email" required minlength="10" v-model="form.email" />
         <label>Email</label>
       </div>
 
       <div class="user__box">
-        <input type="password" required v-model="form.password" />
+        <input type="password" minlength="6" required v-model="form.password" />
         <label>Password</label>
-      </div>
-
-      <div class="user__box">
-        <input
-          type="number"
-          required
-          v-model="form.age"
-          min="18"
-          max="60"
-          minlength="2"
-          maxlength="3"
-        />
-        <label>Age</label>
       </div>
 
       <div class="user__box">
@@ -41,7 +28,7 @@
         <span></span>
         <span></span>
         <span></span>
-        Register
+        {{ requesting ? "Saving..." : "Register" }}
       </button>
       <router-link class="links" to="/login">Login</router-link>
     </form>
@@ -59,9 +46,8 @@ export default {
       email: "",
       password: "",
       fullname: "",
-      age: "",
     },
-    temp: null
+    temp: null,
   }),
 
   methods: {
@@ -70,34 +56,29 @@ export default {
       auth
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then((res) => {
-          res.user.updateProfile({
-            displayName: this.form.fullname,
-          }).then(() => this.signInWithCometChat(res.user.uid))
+          res.user
+            .updateProfile({
+              displayName: this.form.fullname,
+            })
+            .then(() => this.signInWithCometChat(res.user.uid));
         })
-        .catch((error) => console.log(error))
-        .finally(() => (this.requesting = false));
-
+        .catch((error) => console.log(error));
     },
     signInWithCometChat(uid) {
       const apiKey = process.env.VUE_APP_KEY;
-      const age = this.form.age;
-      const firstName = this.form.fullname.split(' ')[0];
-      const name = `${firstName}, ${age}`;
 
       const user = new CometChat.User(uid);
 
-      user.setName(name);
+      user.setName(this.form.fullname);
 
-      CometChat.createUser(user, apiKey).then(
-        () => {
+      CometChat.createUser(user, apiKey)
+        .then(() => {
           CometChat.login(uid, apiKey)
-          .then(() => this.$router.push({ name: "home" }))
-        },
-        (error) => {
-          console.log("error", error);
-        }
-      );
-    }
+          .then(() =>this.$router.push({ name: "home" }));
+        })
+        .catch((error) => console.log("error", error))
+        .finally(() => (this.requesting = false));
+    },
   },
 };
 </script>
