@@ -5,7 +5,7 @@
         <div class="sidebar__avatar">
           <CometChatAvatar />
         </div>
-        <a href="#">My Profile</a>
+        <router-link to="/profile">My Profile</router-link>
       </div>
       <div class="header__right">
         <AccountSearchIcon

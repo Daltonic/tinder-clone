@@ -1,17 +1,12 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <SideBar />
   </div>
 </template>
 
 <script>
-import SideBar from "./components/SideBar";
 export default {
   name: "app",
-  components: {
-    SideBar,
-  },
 };
 </script>
 <style>

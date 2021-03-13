@@ -1,10 +1,13 @@
 <template>
-  <div class="content-wrapper">
-    <div class="content">
-      <MainHeader />
-      <TinderCards />
-      <SwipeButtons />
+  <div>
+    <div class="content-wrapper">
+      <div class="content">
+        <MainHeader />
+        <TinderCards />
+        <SwipeButtons />
+      </div>
     </div>
+    <SideBar />
   </div>
 </template>
 
@@ -12,11 +15,13 @@
 import MainHeader from "../components/MainHeader";
 import TinderCards from "../components/TinderCards";
 import SwipeButtons from "../components/SwipeButtons";
+import SideBar from "../components/SideBar";
 export default {
   components: {
     MainHeader,
     TinderCards,
     SwipeButtons,
+    SideBar,
   },
 };
 </script>
