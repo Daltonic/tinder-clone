@@ -24,6 +24,8 @@
         <span></span>
         Update
       </button>
+
+      <router-link class="links" to="/">Back</router-link>
     </form>
   </div>
 </template>
