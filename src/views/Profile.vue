@@ -53,7 +53,7 @@
 import { CometChat } from "@cometchat-pro/chat";
 import { auth } from "../firebase";
 export default {
-  name: "profile",
+  name: "profile-update",
   data() {
     return {
       requesting: false,

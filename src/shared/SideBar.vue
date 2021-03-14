@@ -8,10 +8,19 @@
         <router-link to="/profile">My Profile</router-link>
       </div>
       <div class="header__right">
-        <AccountSearchIcon
+        <AccountArrowRightIcon
+          v-if="!seeFav"
           class="header__icon"
           :size="30"
           fillColor="#ffffff"
+          @click="seeFav = !seeFav"
+        />
+        <AccountArrowLeftIcon
+          v-else
+          class="header__icon"
+          :size="30"
+          fillColor="#ffffff"
+          @click="seeFav = !seeFav"
         />
       </div>
     </div>
@@ -29,21 +38,10 @@
         <p>Start swipping to connect with new people!</p>
       </div>
     </div>
-    <div class="sidebar__messages">
-      <h4 class="message__title">Messages</h4>
-      <div v-for="user in users" :key="user.uid" class="sidebar__message">
-        <div class="message__left">
-          <CometChatAvatar :image="user.avatar" />
-          <CometChatUserPresence :status="user.status" />
-        </div>
-        <div class="message__right">
-          <h4 class="message__name">{{ user.name }}</h4>
-          <p class="message__content">
-            {{ user.metadata.rawMetadata || "Hello I'm using tinder!" }}
-          </p>
-        </div>
-      </div>
-    </div>
+
+    <Messages v-if="!seeFav" :users="users" />
+    <Messages v-else :users="favorites" title="Favorites" />
+
     <button class="logout__btn" @click="logOut" type="submit">
       <span></span>
       <span></span>
@@ -55,11 +53,10 @@
 </template>
 
 <script>
-import {
-  CometChatAvatar,
-  CometChatUserPresence,
-} from "../cometchat-pro-vue-ui-kit";
-import AccountSearchIcon from "vue-material-design-icons/AccountSearch.vue";
+import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
+import Messages from "../components/Messages";
+import AccountArrowLeftIcon from "vue-material-design-icons/AccountArrowLeft.vue";
+import AccountArrowRightIcon from "vue-material-design-icons/AccountArrowRight.vue";
 import CardsIcon from "vue-material-design-icons/Cards.vue";
 import { auth } from "../firebase";
 export default {
@@ -79,11 +76,26 @@ export default {
         ];
       },
     },
+    favorites: {
+      type: [Object, Array],
+      default: function () {
+        return [
+          {
+            uid: "1",
+            name: "Fullname",
+            avatar:
+              "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/newborn-baby-boy-sleeping-peacefully-wearing-knit-royalty-free-image-1589459736.jpg?crop=0.669xw:1.00xh;0.228xw,0&resize=640:*",
+            metadata: { rawMetadata: "Some Text Here!" },
+          },
+        ];
+      },
+    },
   },
   data() {
     return {
       isLoggedIn: false,
       avatar: "",
+      seeFav: false,
     };
   },
   created() {
@@ -106,10 +118,11 @@ export default {
     },
   },
   components: {
+    Messages,
     CometChatAvatar,
-    CometChatUserPresence,
-    AccountSearchIcon,
+    AccountArrowLeftIcon,
     CardsIcon,
+    AccountArrowRightIcon,
   },
 };
 </script>
@@ -193,40 +206,6 @@ export default {
 
 .sidebar__avatar {
   width: 40px;
-}
-
-.sidebar__messages {
-  padding: 20px 10px;
-  height: 400px;
-  overflow-y: scroll;
-}
-
-.message__title {
-  color: #fd5068;
-  margin-bottom: 10px;
-}
-
-.sidebar__message {
-  display: flex;
-  align-items: center;
-  margin: 20px 0;
-}
-
-.message__left {
-  width: 70px;
-  height: 70px;
-}
-
-.message__left img {
-  object-fit: cover;
-}
-
-.message__right {
-  margin-left: 10px;
-}
-
-.message__name {
-  margin-bottom: 10px;
 }
 
 .logout__btn {

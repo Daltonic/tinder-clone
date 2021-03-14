@@ -6,25 +6,28 @@
         <TinderCards :users="swipables" />
       </div>
     </div>
-    <SideBar :users="users" />
+    <SideBar :users="users" :favorites="favorites" />
   </div>
 </template>
 
 <script>
+import { auth } from "../firebase";
 import { CometChat } from "@cometchat-pro/chat";
-import MainHeader from "../components/MainHeader";
+import MainHeader from "../shared/MainHeader";
 import TinderCards from "../components/TinderCards";
-import SideBar from "../components/SideBar";
+import SideBar from "../shared/SideBar";
 export default {
   name: 'home',
   data() {
     return {
       users: [],
-      swipables: []
+      swipables: [],
+      favorites: []
     }
   },
   created() {
     this.getUsers()
+    this.getFavorites()
   },
   methods: {
     getUsers() {
@@ -37,7 +40,23 @@ export default {
         this.swipables = [...users]
       })
       .catch((error) => console.log(error))
-    }
+    },
+    getFavorites() {
+      const uid = auth.currentUser.uid;
+      CometChat.getUser(uid)
+        .then((user) => {
+          const favorites = user.metadata?.favorites || []
+
+          let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
+          usersRequest
+          .fetchNext()
+          .then((users) => {
+            this.favorites = users.filter(u => favorites.includes(u.uid))
+          })
+          .catch((error) => console.log(error))
+        })
+        .catch((error) => console.log(error));
+    },
   },
   components: {
     MainHeader,
