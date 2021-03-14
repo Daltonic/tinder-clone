@@ -3,7 +3,7 @@
     <div class="tinder__card__container">
       <vue-swing
         v-for="user in users"
-        :key="user.id"
+        :key="user.uid"
         @throwout="swipped(user)"
         :config="config"
         class="swipe"
@@ -28,6 +28,15 @@
           :size="30"
           fillColor="#62b4f9"
           class="swipe__icon swipe__icon__star"
+          @click="onFavorite()"
+          v-if="favored"
+        />
+        <StarOutlineIcon
+          :size="30"
+          fillColor="#62b4f9"
+          class="swipe__icon swipe__icon__star"
+          @click="onFavorite()"
+          v-else
         />
         <HeartIcon
           :size="30"
@@ -40,9 +49,12 @@
 </template>
 
 <script>
+import { auth } from "../firebase";
+import { CometChat } from "@cometchat-pro/chat";
 import VueSwing from "vue-swing";
 import CloseIcon from "vue-material-design-icons/Close.vue";
 import StarIcon from "vue-material-design-icons/Star.vue";
+import StarOutlineIcon from "vue-material-design-icons/StarOutline.vue";
 import HeartIcon from "vue-material-design-icons/Heart.vue";
 export default {
   name: "tinder-cards",
@@ -64,65 +76,22 @@ export default {
   },
   data() {
     return {
-      people: [
-        {
-          email: "bird_alex@outlook.com",
-          gender: "male",
-          id: "flying-voice",
-          name: "Nedra Marvin",
-          url:
-            "https://cdn.mos.cms.futurecdn.net/psewhVdSoB8HyGXfqaz7rb-320-80.jpg",
-        },
-        {
-          email: "ratione_ebba@gmail.com",
-          gender: "female",
-          id: "doc.shadow",
-          name: "Layne Dickens",
-          url: "https://s.hs-data.com/bilder/spieler/gross/128447.jpg",
-        },
-        {
-          email: "rail@hotmail.com",
-          gender: "male",
-          id: "lady.violet",
-          name: "Marian Kling",
-          url:
-            "https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg",
-        },
-        {
-          email: "darby@yahoo.com",
-          gender: "female",
-          id: "hungry.leaf.20",
-          name: "Hudson Stehr",
-          url:
-            "https://upload.wikimedia.org/wikipedia/commons/d/d9/Lionel_Messi_20180626_%28cropped%29.jpg",
-        },
-        {
-          email: "when@outlook.com",
-          gender: "female",
-          id: "mysterious-dust",
-          name: "Mercedes Veum",
-          url:
-            "https://resources.premierleague.com/premierleague/photos/players/250x250/p42786.png",
-        },
-        {
-          email: "einar@yahoo.com",
-          gender: "male",
-          id: "doc.meadow",
-          name: "Elenora Blick",
-          url: "https://gossipgist.com/uploads/27177/pedro-sportnet.jpg",
-        },
-      ],
       config: {
         allowedDirections: [VueSwing.Direction.LEFT, VueSwing.Direction.RIGHT],
         minThrowOutDistance: 250,
         maxThrowOutDistance: 300,
       },
+      favorites: [],
     };
+  },
+  created() {
+    this.getUser()
   },
   components: {
     VueSwing,
     CloseIcon,
     StarIcon,
+    StarOutlineIcon,
     HeartIcon,
   },
   methods: {
@@ -130,6 +99,38 @@ export default {
       const index = this.users.findIndex((u) => u.uid == user.uid);
       this.users.splice(index, 1);
     },
+    getUser() {
+      const uid = auth.currentUser.uid;
+      CometChat.getUser(uid)
+        .then((user) => this.favorites = user.metadata?.favorites || [])
+        .catch((error) => console.log(error));
+    },
+    onFavorite() {
+      const data = this.currentCard
+      const apiKey = process.env.VUE_APP_KEY;
+
+      if (!this.favorites.includes(data.uid)) {
+        this.favorites.push(data.uid)
+      }else {
+        const index = this.favorites.findIndex(f => f == data.uid)
+        this.favorites.splice(index, 1)
+      }
+
+      const user = new CometChat.User(auth.currentUser.uid);
+      user.setMetadata({ ...data.metadata, favorites: this.favorites });
+
+      CometChat.updateUser(user, apiKey)
+        .then(() => console.log(user))
+        .catch((error) => console.log(error));
+    },
+  },
+  computed: {
+    currentCard() {
+      return this.users[this.users.length - 1];
+    },
+    favored() {
+      return this.favorites.includes(this.currentCard?.uid || 99999)
+    }
   },
 };
 </script>

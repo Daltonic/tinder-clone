@@ -3,7 +3,7 @@
     <div class="content-wrapper">
       <div class="content">
         <MainHeader />
-        <TinderCards :users="users" />
+        <TinderCards :users="swipables" />
       </div>
     </div>
     <SideBar :users="users" />
@@ -19,7 +19,8 @@ export default {
   name: 'home',
   data() {
     return {
-      users: []
+      users: [],
+      swipables: []
     }
   },
   created() {
@@ -29,10 +30,13 @@ export default {
     getUsers() {
       let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
 
-      usersRequest.fetchNext().then(
-        userList => this.users = userList,
-        error => console.log("User list fetching failed with error:", error)
-      );
+      usersRequest
+      .fetchNext()
+      .then((users) => {
+        this.users = [...users]
+        this.swipables = [...users]
+      })
+      .catch((error) => console.log(error))
     }
   },
   components: {
