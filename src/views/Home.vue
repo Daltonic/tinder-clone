@@ -6,7 +6,7 @@
         <TinderCards :users="swipables" />
       </div>
     </div>
-    <SideBar :users="users" :favorites="favorites" />
+    <SideBar :matched="matched" :favorites="favorites" />
   </div>
 </template>
 
@@ -22,36 +22,29 @@ export default {
     return {
       users: [],
       swipables: [],
-      favorites: []
+      favorites: [],
+      matched: []
     }
   },
   created() {
-    this.getUsers()
     this.getFavorites()
   },
   methods: {
-    getUsers() {
-      let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
-
-      usersRequest
-      .fetchNext()
-      .then((users) => {
-        this.users = [...users]
-        this.swipables = [...users]
-      })
-      .catch((error) => console.log(error))
-    },
     getFavorites() {
       const uid = auth.currentUser.uid;
       CometChat.getUser(uid)
         .then((user) => {
           const favorites = user.metadata?.favorites || []
+          const requests = user.metadata?.requests || []
 
           let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
           usersRequest
           .fetchNext()
           .then((users) => {
-            this.favorites = users.filter(u => favorites.includes(u.uid))
+            this.users = [...users]
+            this.swipables = [...users]
+            this.favorites = users.filter(u => favorites.includes(u.uid)) 
+            this.matched = users.filter(u => requests.includes(u.uid)) 
           })
           .catch((error) => console.log(error))
         })

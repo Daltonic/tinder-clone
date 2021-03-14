@@ -5,7 +5,7 @@
         <div class="sidebar__avatar">
           <CometChatAvatar :image="avatar" />
         </div>
-        <router-link to="/profile">My Profile</router-link>
+        <router-link to="/profile" :title="name">My Profile</router-link>
       </div>
       <div class="header__right">
         <AccountArrowRightIcon
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <Messages v-if="!seeFav" :users="users" />
+    <Messages v-if="!seeFav" :users="matched" title="Matched" />
     <Messages v-else :users="favorites" title="Favorites" />
 
     <button class="logout__btn" @click="logOut" type="submit">
@@ -62,7 +62,7 @@ import { auth } from "../firebase";
 export default {
   name: "sidebar",
   props: {
-    users: {
+    matched: {
       type: [Object, Array],
       default: function () {
         return [
@@ -95,6 +95,7 @@ export default {
     return {
       isLoggedIn: false,
       avatar: "",
+      name: "",
       seeFav: false,
     };
   },
@@ -103,6 +104,7 @@ export default {
       if (user) {
         this.isLoggedIn = true;
         this.avatar = user.photoURL;
+        this.name = user.displayName;
       } else {
         this.isLoggedIn = false;
       }

@@ -42,6 +42,15 @@
           :size="30"
           fillColor="#76e2b3"
           class="swipe__icon swipe__icon__heart"
+          @click="onRequest()"
+          v-if="requested"
+        />
+        <HeartOutlineIcon
+          :size="30"
+          fillColor="#76e2b3"
+          class="swipe__icon swipe__icon__heart"
+          @click="onRequest()"
+          v-else
         />
       </div>
     </div>
@@ -56,6 +65,7 @@ import CloseIcon from "vue-material-design-icons/Close.vue";
 import StarIcon from "vue-material-design-icons/Star.vue";
 import StarOutlineIcon from "vue-material-design-icons/StarOutline.vue";
 import HeartIcon from "vue-material-design-icons/Heart.vue";
+import HeartOutlineIcon from "vue-material-design-icons/HeartOutline.vue";
 export default {
   name: "tinder-cards",
   props: {
@@ -82,10 +92,12 @@ export default {
         maxThrowOutDistance: 300,
       },
       favorites: [],
+      requests: [],
     };
   },
   created() {
-    this.getUser()
+    this.getUser();
+
   },
   components: {
     VueSwing,
@@ -93,6 +105,7 @@ export default {
     StarIcon,
     StarOutlineIcon,
     HeartIcon,
+    HeartOutlineIcon,
   },
   methods: {
     swipped(user) {
@@ -102,22 +115,45 @@ export default {
     getUser() {
       const uid = auth.currentUser.uid;
       CometChat.getUser(uid)
-        .then((user) => this.favorites = user.metadata?.favorites || [])
+        .then((user) => {
+          this.favorites = user.metadata?.favorites || [];
+          this.requests = user.metadata?.requests || [];
+        })
+        .catch((error) => console.log(error));
+    },
+    onRequest() {
+      const data = {...this.currentCard};
+      const apiKey = process.env.VUE_APP_KEY;
+      const uid = auth.currentUser.uid;
+
+      if (!this.requests.includes(data.uid)) {
+        this.requests.push(data.uid);
+      } else {
+        const index = this.requests.findIndex((f) => f == data.uid);
+        this.requests.splice(index, 1);
+      }
+
+      const user = new CometChat.User(uid);
+      user.setMetadata({ ...data.metadata, favorites: this.favorites, requests: this.requests });
+
+      CometChat.updateUser(user, apiKey)
+        .then(() => console.log(user))
         .catch((error) => console.log(error));
     },
     onFavorite() {
-      const data = this.currentCard
+      const data = {...this.currentCard};
       const apiKey = process.env.VUE_APP_KEY;
+      const uid = auth.currentUser.uid;
 
       if (!this.favorites.includes(data.uid)) {
-        this.favorites.push(data.uid)
-      }else {
-        const index = this.favorites.findIndex(f => f == data.uid)
-        this.favorites.splice(index, 1)
+        this.favorites.push(data.uid);
+      } else {
+        const index = this.favorites.findIndex((f) => f == data.uid);
+        this.favorites.splice(index, 1);
       }
 
-      const user = new CometChat.User(auth.currentUser.uid);
-      user.setMetadata({ ...data.metadata, favorites: this.favorites });
+      const user = new CometChat.User(uid);
+      user.setMetadata({ ...data.metadata, favorites: this.favorites, requests: this.requests });
 
       CometChat.updateUser(user, apiKey)
         .then(() => console.log(user))
@@ -129,8 +165,11 @@ export default {
       return this.users[this.users.length - 1];
     },
     favored() {
-      return this.favorites.includes(this.currentCard?.uid || 99999)
-    }
+      return this.favorites.includes(this.currentCard?.uid || 99999);
+    },
+    requested() {
+      return this.requests.includes(this.currentCard?.uid || 99999);
+    },
   },
 };
 </script>
@@ -168,6 +207,13 @@ export default {
   bottom: 0;
   margin: 10px;
   color: #fff;
+  background: linear-gradient(
+    109deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  border-radius: 9px;
+  padding: 5px;
 }
 
 .swipe__icons__container {
