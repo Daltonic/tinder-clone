@@ -6,11 +6,11 @@
           <header class="msger-header">
             <div class="msger-header-title">
               <div class="msger__avatar">
-                <CometChatAvatar />
+                <CometChatAvatar :image="user.avatar" />
               </div>
               <div class="msger__avatar__details">
-                <p>Name goes here</p>
-                <small>Online</small>
+                <p>{{user.name}}</p>
+                <small>{{user.status}}</small>
               </div>
             </div>
             <div class="msger__options">
@@ -95,7 +95,8 @@ export default {
   data() {
     return {
       messages: [],
-      message: ""
+      message: "",
+      user: {}
     };
   },
   components: {
@@ -106,8 +107,15 @@ export default {
   },
   created() {
     this.getMessages();
+    this.getUser()
   },
   methods: {
+    getUser() {
+      const uid = this.uid;
+      CometChat.getUser(uid)
+        .then((user) => this.user = user)
+        .catch((error) => console.log(error));
+    },
     getMessages() {
       const limit = 50;
       const UID = this.uid
