@@ -14,7 +14,7 @@
               </div>
             </div>
             <div class="msger__options">
-              <PhoneIcon :size="30" />
+              <PhoneIcon :size="30" @click="initiateAudioCall()" />
               <VideoIcon :size="30" />
             </div>
           </header>
@@ -74,6 +74,8 @@
       </div>
     </div>
     <SideBar />
+    <IncomingCall :caller="caller" v-if="hasCall" />
+    <OutgoingCall :caller="caller" v-if="isCalling" />
   </div>
 </template>
 
@@ -83,6 +85,8 @@ import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
 import VideoIcon from "vue-material-design-icons/Video.vue";
 import PhoneIcon from "vue-material-design-icons/Phone.vue";
 import SideBar from "../shared/SideBar";
+import IncomingCall from "../components/IncomingCall";
+import OutgoingCall from "../components/OutgoingCall";
 export default {
   name: "chats",
   props: {
@@ -96,10 +100,15 @@ export default {
       messages: [],
       message: "",
       user: {},
+      caller: {},
+      hasCall: false,
+      isCalling: false,
     };
   },
   components: {
     SideBar,
+    IncomingCall,
+    OutgoingCall,
     CometChatAvatar,
     VideoIcon,
     PhoneIcon,
@@ -107,7 +116,8 @@ export default {
   created() {
     this.getMessages();
     this.getUser();
-    this.listenForMessage()
+    this.listenForMessage();
+    this.listenForCall();
   },
   methods: {
     getUser() {
@@ -144,22 +154,60 @@ export default {
       CometChat.sendMessage(textMessage)
         .then((message) => {
           this.message = "";
-          this.messages.push(message)
+          this.messages.push(message);
         })
         .catch((error) =>
           console.log("Message sending failed with error:", error)
         );
     },
     listenForMessage() {
-      var listenerID = this.uid;
+      const listenerID = this.uid;
 
       CometChat.addMessageListener(
         listenerID,
         new CometChat.MessageListener({
-          onTextMessageReceived: (textMessage) => {
-            console.log("Text message received successfully", textMessage);
-            this.messages.push(textMessage)
-          }
+          onTextMessageReceived: (textMessage) =>
+            this.messages.push(textMessage),
+        })
+      );
+    },
+    initiateAudioCall() {
+      const receiverID = this.uid;
+      const callType = CometChat.CALL_TYPE.AUDIO;
+      const receiverType = CometChat.RECEIVER_TYPE.USER;
+
+      const call = new CometChat.Call(receiverID, callType, receiverType);
+
+      CometChat.initiateCall(call)
+        .then((caller) => {
+          this.caller = caller;
+          this.isCalling = true;
+        })
+        .catch((error) => {
+          this.isCalling = false;
+          console.log("Call initialization failed with exception:", error);
+        });
+    },
+    listenForCall() {
+      const listnerID = this.uid;
+      CometChat.addCallListener(
+        listnerID,
+        new CometChat.CallListener({
+          onIncomingCallReceived(call) {
+            console.log("Incoming call:", call);
+            this.hasCall = true;
+          },
+          onOutgoingCallAccepted(call) {
+            console.log("Outgoing call accepted:", call);
+            // Outgoing Call Accepted
+          },
+          onOutgoingCallRejected(call) {
+            console.log("Outgoing call rejected:", call);
+            // Outgoing Call Rejected
+          },
+          onIncomingCallCancelled(call) {
+            console.log("Incoming call calcelled:", call);
+          },
         })
       );
     },
