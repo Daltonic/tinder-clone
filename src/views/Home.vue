@@ -6,7 +6,7 @@
         <TinderCards :users="swipables" />
       </div>
     </div>
-    <SideBar :matched="matched" :favorites="favorites" />
+    <SideBar />
   </div>
 </template>
 
@@ -17,36 +17,32 @@ import MainHeader from "../shared/MainHeader";
 import TinderCards from "../components/TinderCards";
 import SideBar from "../shared/SideBar";
 export default {
-  name: 'home',
+  name: "home",
   data() {
     return {
-      users: [],
       swipables: [],
-      favorites: [],
-      matched: []
-    }
+    };
   },
   created() {
-    this.getFavorites()
+    this.getUsers();
   },
   methods: {
-    getFavorites() {
+    getUsers() {
       const uid = auth.currentUser.uid;
       CometChat.getUser(uid)
-        .then((user) => {
-          const favorites = user.metadata?.favorites || []
-          const requests = user.metadata?.requests || []
+        .then(() => {
+          let usersRequest = new CometChat.UsersRequestBuilder()
+            .setLimit(30)
+            .build();
 
-          let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
           usersRequest
-          .fetchNext()
-          .then((users) => {
-            this.users = [...users]
-            this.swipables = users.filter(u => u.id = Date.now() + ((Math.random()*100000).toFixed()))
-            this.favorites = users.filter(u => favorites.includes(u.uid)) 
-            this.matched = users.filter(u => requests.includes(u.uid)) 
-          })
-          .catch((error) => console.log(error))
+            .fetchNext()
+            .then((users) => {
+              this.swipables = users.filter(
+                (u) => (u.id = Date.now() + (Math.random() * 100000).toFixed())
+              );
+            })
+            .catch((error) => console.log(error));
         })
         .catch((error) => console.log(error));
     },

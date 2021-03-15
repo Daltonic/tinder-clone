@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { CometChat } from "@cometchat-pro/chat";
 import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
 import Messages from "../components/Messages";
 import AccountArrowLeftIcon from "vue-material-design-icons/AccountArrowLeft.vue";
@@ -61,42 +62,14 @@ import CardsIcon from "vue-material-design-icons/Cards.vue";
 import { auth } from "../firebase";
 export default {
   name: "sidebar",
-  props: {
-    matched: {
-      type: [Object, Array],
-      default: function () {
-        return [
-          {
-            uid: "1",
-            name: "Fullname",
-            avatar:
-              "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/newborn-baby-boy-sleeping-peacefully-wearing-knit-royalty-free-image-1589459736.jpg?crop=0.669xw:1.00xh;0.228xw,0&resize=640:*",
-            metadata: { rawMetadata: "Some Text Here!" },
-          },
-        ];
-      },
-    },
-    favorites: {
-      type: [Object, Array],
-      default: function () {
-        return [
-          {
-            uid: "1",
-            name: "Fullname",
-            avatar:
-              "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/newborn-baby-boy-sleeping-peacefully-wearing-knit-royalty-free-image-1589459736.jpg?crop=0.669xw:1.00xh;0.228xw,0&resize=640:*",
-            metadata: { rawMetadata: "Some Text Here!" },
-          },
-        ];
-      },
-    },
-  },
   data() {
     return {
       isLoggedIn: false,
       avatar: "",
       name: "",
       seeFav: false,
+      matched: [],
+      favorites: []
     };
   },
   created() {
@@ -105,12 +78,31 @@ export default {
         this.isLoggedIn = true;
         this.avatar = user.photoURL;
         this.name = user.displayName;
+        this.getUser()
       } else {
         this.isLoggedIn = false;
       }
     });
   },
   methods: {
+    getUser() {
+      const uid = auth.currentUser.uid;
+      CometChat.getUser(uid)
+        .then((user) => {
+          const favorites = user.metadata?.favorites || []
+          const requests = user.metadata?.requests || []
+
+          let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
+          usersRequest
+          .fetchNext()
+          .then((users) => {
+            this.favorites = users.filter(u => favorites.includes(u.uid)) 
+            this.matched = users.filter(u => requests.includes(u.uid)) 
+          })
+          .catch((error) => console.log(error))
+        })
+        .catch((error) => console.log(error));
+    },
     logOut() {
       auth
         .signOut()
