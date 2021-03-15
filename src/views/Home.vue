@@ -42,7 +42,7 @@ export default {
           .fetchNext()
           .then((users) => {
             this.users = [...users]
-            this.swipables = [...users]
+            this.swipables = users.filter(u => u.id = Date.now() + ((Math.random()*100000).toFixed()))
             this.favorites = users.filter(u => favorites.includes(u.uid)) 
             this.matched = users.filter(u => requests.includes(u.uid)) 
           })

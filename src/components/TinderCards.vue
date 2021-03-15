@@ -3,7 +3,7 @@
     <div class="tinder__card__container">
       <vue-swing
         v-for="user in users"
-        :key="user.uid"
+        :key="user.id"
         @throwout="swipped(user)"
         :config="config"
         class="swipe"
@@ -111,6 +111,8 @@ export default {
     swipped(user) {
       const index = this.users.findIndex((u) => u.uid == user.uid);
       this.users.splice(index, 1);
+      user.id = Date.now() + ((Math.random()*100000).toFixed())
+      this.users.unshift({...user})
     },
     getUser() {
       const uid = auth.currentUser.uid;
