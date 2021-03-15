@@ -9,8 +9,8 @@
                 <CometChatAvatar :image="user.avatar" />
               </div>
               <div class="msger__avatar__details">
-                <p>{{user.name}}</p>
-                <small>{{user.status}}</small>
+                <p>{{ user.name }}</p>
+                <small>{{ user.status }}</small>
               </div>
             </div>
             <div class="msger__options">
@@ -20,43 +20,42 @@
           </header>
 
           <main class="msger-chat">
-            <div v-for="n in 2" :key="n">
-              <div class="msg left-msg">
+            <div v-for="message in messages" :key="message.sentAt">
+              <div v-if="message.receiverId !== user.uid" class="msg left-msg">
                 <CometChatAvatar
-                  :image="'https://image.flaticon.com/icons/svg/327/327779.svg'"
+                  :image="user.avatar"
                   class="msg-img"
                   style="width: 50px; height: 50px"
                 />
 
                 <div class="msg-bubble">
                   <div class="msg-info">
-                    <div class="msg-info-name">BOT</div>
-                    <div class="msg-info-time">12:45</div>
+                    <div class="msg-info-name">{{ user.name }}</div>
+                    <div class="msg-info-time">
+                      {{ toReadableString(message.sentAt) }}
+                    </div>
                   </div>
 
-                  <div class="msg-text">
-                    Hi, welcome to SimpleChat! Go ahead and send me a message.
-                    😄
-                  </div>
+                  <div class="msg-text">{{ message.text }}</div>
                 </div>
               </div>
 
-              <div class="msg right-msg">
+              <div v-else class="msg right-msg">
                 <CometChatAvatar
-                  :image="'https://image.flaticon.com/icons/svg/145/145867.svg'"
+                  :image="message.sender.avatar"
                   class="msg-img"
                   style="width: 50px; height: 50px"
                 />
 
                 <div class="msg-bubble">
                   <div class="msg-info">
-                    <div class="msg-info-name">Sajad</div>
-                    <div class="msg-info-time">12:46</div>
+                    <div class="msg-info-name">{{ message.sender.name }}</div>
+                    <div class="msg-info-time">
+                      {{ toReadableString(message.sentAt) }}
+                    </div>
                   </div>
 
-                  <div class="msg-text">
-                    You can change your name in JS section!
-                  </div>
+                  <div class="msg-text">{{ message.text }}</div>
                 </div>
               </div>
             </div>
@@ -89,14 +88,14 @@ export default {
   props: {
     uid: {
       type: String,
-      require: true
-    }
+      require: true,
+    },
   },
   data() {
     return {
       messages: [],
       message: "",
-      user: {}
+      user: {},
     };
   },
   components: {
@@ -107,22 +106,22 @@ export default {
   },
   created() {
     this.getMessages();
-    this.getUser()
+    this.getUser();
+    this.listenForMessage()
   },
   methods: {
     getUser() {
       const uid = this.uid;
       CometChat.getUser(uid)
-        .then((user) => this.user = user)
+        .then((user) => (this.user = user))
         .catch((error) => console.log(error));
     },
     getMessages() {
       const limit = 50;
-      const UID = this.uid
 
       const messagesRequest = new CometChat.MessagesRequestBuilder()
         .setLimit(limit)
-        .setUID(UID)
+        .setUID(this.uid)
         .build();
 
       messagesRequest
@@ -142,14 +141,38 @@ export default {
         receiverType
       );
 
-      CometChat
-        .sendMessage(textMessage)
+      CometChat.sendMessage(textMessage)
         .then((message) => {
-          this.message = ""
-          console.log("Message sent successfully:", message)
+          this.message = "";
+          this.messages.push(message)
         })
-        .catch((error) => console.log("Message sending failed with error:", error))
-    }
+        .catch((error) =>
+          console.log("Message sending failed with error:", error)
+        );
+    },
+    listenForMessage() {
+      var listenerID = this.uid;
+
+      CometChat.addMessageListener(
+        listenerID,
+        new CometChat.MessageListener({
+          onTextMessageReceived: (textMessage) => {
+            console.log("Text message received successfully", textMessage);
+            this.messages.push(textMessage)
+          }
+        })
+      );
+    },
+    toReadableString(time) {
+      if (time < 0) time = 0;
+      let hrs = ~~((time / 3600) % 24),
+        mins = ~~((time % 3600) / 60),
+        timeType = hrs > 11 ? "PM" : "AM";
+      if (hrs > 12) hrs = hrs - 12;
+      if (hrs == 0) hrs = 12;
+      if (mins < 10) mins = "0" + mins;
+      return hrs + ":" + mins + timeType;
+    },
   },
 };
 </script>
@@ -339,7 +362,8 @@ body {
   margin-right: 10px;
 }
 
-.msger__avatar img {
+.msger__avatar img,
+.msg-img {
   object-fit: cover;
 }
 
