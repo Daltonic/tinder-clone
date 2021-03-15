@@ -123,7 +123,7 @@ export default {
 
 <style>
 .sidebar {
-  position: relative;
+  position: absolute;
   width: 320px;
   margin-right: -320px;
   float: right;
