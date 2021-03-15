@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar__messages">
     <h4 class="message__title">{{title}}</h4>
-    <div v-for="user in users" :key="user.uid" class="sidebar__message">
+    <router-link :to="'/chats/' + user.uid" v-for="user in users" :key="user.uid" class="sidebar__message">
       <div class="message__left">
         <CometChatAvatar :image="user.avatar" />
         <CometChatUserPresence :status="user.status" />
@@ -12,7 +12,7 @@
           {{ user.metadata.rawMetadata || "Hello I'm using tinder!" }}
         </p>
       </div>
-    </div>
+    </router-link>
   </div>
 </template>
 
@@ -52,6 +52,16 @@ export default {
   padding: 20px 10px;
   height: 400px;
   overflow-y: scroll;
+}
+
+.sidebar__messages a {
+  color: black;
+  text-decoration: none;
+}
+
+.sidebar__messages a:hover {
+  background: #f9f9ff;
+  transition: 0.5s;
 }
 
 .message__title {

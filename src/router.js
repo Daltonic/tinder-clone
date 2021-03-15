@@ -6,14 +6,21 @@ Vue.use(Router)
 const routes = [
   {
     path: '/',
-    component: () => import(/* webpackChunkName: "Home" */ './views/Home.vue'),
+    component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
     name: 'home',
     meta: { requiresAuth: true, requiresProfile: true }
   },
   {
     path: '/profile',
-    component: () => import(/* webpackChunkName: "Profile" */ './views/Profile.vue'),
+    component: () => import(/* webpackChunkName: "profile" */ './views/Profile.vue'),
     name: 'Profile',
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/chats/:id',
+    component: () => import(/* webpackChunkName: "chats" */ './views/Chats.vue'),
+    name: 'chats',
+    props: true,
     meta: { requiresAuth: true }
   },
   {
