@@ -30,7 +30,9 @@
     <div class="sidebar__discover">
       <div class="discover__left">
         <div class="card__circle">
-          <CardsIcon fillColor="#fd5068" :size="40" />
+          <router-link to="/">
+            <CardsIcon fillColor="#fd5068" :size="40" />
+          </router-link>
         </div>
       </div>
       <div class="discover__right">

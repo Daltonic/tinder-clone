@@ -20,7 +20,7 @@
           </header>
 
           <main class="msger-chat">
-            <div v-for="n in 10" :key="n">
+            <div v-for="n in 2" :key="n">
               <div class="msg left-msg">
                 <CometChatAvatar
                   :image="'https://image.flaticon.com/icons/svg/327/327779.svg'"
@@ -62,11 +62,12 @@
             </div>
             <div class="spacer"></div>
           </main>
-          <form class="msger-inputarea">
+          <form @submit.prevent="sendMessage()" class="msger-inputarea">
             <input
               type="text"
               class="msger-input"
               placeholder="Enter your message..."
+              v-model.trim="message"
             />
             <button type="submit" class="msger-send-btn">Send</button>
           </form>
@@ -82,13 +83,19 @@ import { CometChat } from "@cometchat-pro/chat";
 import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
 import VideoIcon from "vue-material-design-icons/Video.vue";
 import PhoneIcon from "vue-material-design-icons/Phone.vue";
-import { auth } from "../firebase";
 import SideBar from "../shared/SideBar";
 export default {
   name: "chats",
+  props: {
+    uid: {
+      type: String,
+      require: true
+    }
+  },
   data() {
     return {
       messages: [],
+      message: ""
     };
   },
   components: {
@@ -102,8 +109,8 @@ export default {
   },
   methods: {
     getMessages() {
-      const UID = auth.currentUser.uid;
       const limit = 50;
+      const UID = this.uid
 
       const messagesRequest = new CometChat.MessagesRequestBuilder()
         .setLimit(limit)
@@ -117,6 +124,24 @@ export default {
           console.log("Message fetching failed with error:", error)
         );
     },
+    sendMessage() {
+      const receiverID = this.uid;
+      const messageText = this.message;
+      const receiverType = CometChat.RECEIVER_TYPE.USER;
+      const textMessage = new CometChat.TextMessage(
+        receiverID,
+        messageText,
+        receiverType
+      );
+
+      CometChat
+        .sendMessage(textMessage)
+        .then((message) => {
+          this.message = ""
+          console.log("Message sent successfully:", message)
+        })
+        .catch((error) => console.log("Message sending failed with error:", error))
+    }
   },
 };
 </script>
