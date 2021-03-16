@@ -23,7 +23,7 @@
         <span></span>
         <span></span>
         <span></span>
-        {{ requesting ? "Saving..." : "Login" }}
+        {{ requesting ? "Log..." : "Login" }}
       </button>
       <router-link class="links" to="/register">Register</router-link>
     </form>

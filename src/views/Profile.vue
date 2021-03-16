@@ -41,7 +41,7 @@
         <span></span>
         <span></span>
         <span></span>
-        {{ requesting ? "Saving..." : "Update" }}
+        {{ requesting ? "Log..." : "Update" }}
       </button>
 
       <router-link class="links" to="/">Back</router-link>

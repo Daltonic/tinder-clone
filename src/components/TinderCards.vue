@@ -23,6 +23,7 @@
           :size="30"
           fillColor="#ec5e6f"
           class="swipe__icon swipe__icon__close"
+          @click="reject()"
         />
         <StarIcon
           :size="30"
@@ -108,6 +109,9 @@ export default {
     HeartOutlineIcon,
   },
   methods: {
+    reject() {
+      this.swipped(this.currentCard)
+    },
     swipped(user) {
       const index = this.users.findIndex((u) => u.uid == user.uid);
       this.users.splice(index, 1);

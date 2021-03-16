@@ -11,7 +11,7 @@
         <span></span>
         <span></span>
         <span></span>
-        Send
+        {{ requesting ? "Log..." : "Send" }}
       </button>
       <router-link to="/login">Login</router-link>
     </form>
