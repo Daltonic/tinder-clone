@@ -3,20 +3,20 @@
     <div class="pulse">
       <CometChatAvatar :image="caller.receiver.avatar" />
     </div>
-    <h4>Calling {{caller.receiver.name}}</h4>
+    <h4>Calling {{ caller.receiver.name }}</h4>
     <div class="call-icons">
       <PhoneHangupIcon
-        @click="onReject()"
+        @click="reject()"
         class="call-icon call-reject"
         :size="20"
         fillColor="#ffffff"
+        title="End call"
       />
     </div>
   </div>
 </template>
 
 <script>
-// import PhoneIcon from "vue-material-design-icons/Phone.vue";
 import PhoneHangupIcon from "vue-material-design-icons/PhoneHangup.vue";
 import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
 export default {
@@ -28,15 +28,12 @@ export default {
       default: function () {
         return {};
       },
-    },
+    }
   },
   methods: {
-    onAccept() {
-      console.log('call accepted');
-    },
-    onReject() {
-      console.log('call rejected');
-    },
+    reject() {
+      this.$emit('reject')
+    }
   },
   components: {
     // PhoneIcon,

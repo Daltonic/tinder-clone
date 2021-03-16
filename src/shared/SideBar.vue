@@ -25,7 +25,12 @@
       </div>
     </div>
     <div class="sidebar__search">
-      <input class="search__input" type="search" placeholder="Search" />
+      <input
+        class="search__input"
+        type="search"
+        placeholder="Search"
+        v-model="keyword"
+      />
     </div>
     <div class="sidebar__discover">
       <div class="discover__left">
@@ -41,7 +46,11 @@
       </div>
     </div>
 
-    <Messages v-if="!seeFav" :users="matched" title="Matched" />
+    <Messages
+      v-if="!seeFav"
+      :users="isSearching ? results : matched"
+      title="Matched"
+    />
     <Messages v-else :users="favorites" title="Favorites" />
 
     <button class="logout__btn" @click="logOut" type="submit">
@@ -71,7 +80,10 @@ export default {
       name: "",
       seeFav: false,
       matched: [],
-      favorites: []
+      favorites: [],
+      results: [],
+      keyword: "",
+      isSearching: false,
     };
   },
   created() {
@@ -80,7 +92,7 @@ export default {
         this.isLoggedIn = true;
         this.avatar = user.photoURL;
         this.name = user.displayName;
-        this.getUser()
+        this.getUser();
       } else {
         this.isLoggedIn = false;
       }
@@ -91,17 +103,19 @@ export default {
       const uid = auth.currentUser.uid;
       CometChat.getUser(uid)
         .then((user) => {
-          const favorites = user.metadata?.favorites || []
-          const requests = user.metadata?.requests || []
+          const favorites = user.metadata?.favorites || [];
+          const requests = user.metadata?.requests || [];
 
-          let usersRequest = new CometChat.UsersRequestBuilder().setLimit(30).build();
+          let usersRequest = new CometChat.UsersRequestBuilder()
+            .setLimit(30)
+            .build();
           usersRequest
-          .fetchNext()
-          .then((users) => {
-            this.favorites = users.filter(u => favorites.includes(u.uid)) 
-            this.matched = users.filter(u => requests.includes(u.uid)) 
-          })
-          .catch((error) => console.log(error))
+            .fetchNext()
+            .then((users) => {
+              this.favorites = users.filter((u) => favorites.includes(u.uid));
+              this.matched = users.filter((u) => requests.includes(u.uid));
+            })
+            .catch((error) => console.log(error));
         })
         .catch((error) => console.log(error));
     },
@@ -119,6 +133,19 @@ export default {
     AccountArrowLeftIcon,
     CardsIcon,
     AccountArrowRightIcon,
+  },
+  watch: {
+    keyword() {
+      if (this.keyword.length != "") {
+        this.isSearching = true;
+        this.seeFav = false;
+        this.results = this.matched.filter(
+          (user) => user.name.indexOf(this.keyword) !== -1
+        );
+      } else {
+        this.isSearching = false;
+      }
+    },
   },
 };
 </script>

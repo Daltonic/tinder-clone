@@ -74,25 +74,22 @@
       </div>
     </div>
     <SideBar />
-    <IncomingCall :caller="caller" v-if="hasCall" />
-    <OutgoingCall :caller="caller" v-if="isCalling" />
+    <CometChatOutgoingCall :type="'audio'" :outgoingCall="caller" />
   </div>
 </template>
 
 <script>
 import { CometChat } from "@cometchat-pro/chat";
-import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
+import { CometChatAvatar, CometChatOutgoingCall } from "../cometchat-pro-vue-ui-kit";
 import VideoIcon from "vue-material-design-icons/Video.vue";
 import PhoneIcon from "vue-material-design-icons/Phone.vue";
 import SideBar from "../shared/SideBar";
-import IncomingCall from "../components/IncomingCall";
-import OutgoingCall from "../components/OutgoingCall";
 export default {
   name: "chats",
   props: {
     uid: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   data() {
@@ -101,15 +98,12 @@ export default {
       message: "",
       user: {},
       caller: {},
-      hasCall: false,
-      isCalling: false,
     };
   },
   components: {
     SideBar,
-    IncomingCall,
-    OutgoingCall,
     CometChatAvatar,
+    CometChatOutgoingCall,
     VideoIcon,
     PhoneIcon,
   },
@@ -181,12 +175,11 @@ export default {
       CometChat.initiateCall(call)
         .then((caller) => {
           this.caller = caller;
-          this.isCalling = true;
+          console.log(caller);
         })
-        .catch((error) => {
-          this.isCalling = false;
-          console.log("Call initialization failed with exception:", error);
-        });
+        .catch((error) =>
+          console.log("Call initialization failed with exception:", error)
+        );
     },
     listenForCall() {
       const listnerID = this.uid;
@@ -194,8 +187,8 @@ export default {
         listnerID,
         new CometChat.CallListener({
           onIncomingCallReceived(call) {
+            // this.hasCall = true;
             console.log("Incoming call:", call);
-            this.hasCall = true;
           },
           onOutgoingCallAccepted(call) {
             console.log("Outgoing call accepted:", call);
@@ -207,9 +200,26 @@ export default {
           },
           onIncomingCallCancelled(call) {
             console.log("Incoming call calcelled:", call);
+            this.onReject("incoming");
           },
         })
       );
+    },
+    onAccept() {
+      const sessionID = this.caller.sessionId;
+      const status = CometChat.CALL_STATUS.REJECTED;
+
+      CometChat.rejectCall(sessionID, status)
+        .then((call) => console.log(call))
+        .catch((error) => console.log("Their was an error: ", error));
+    },
+    onReject() {
+      const sessionID = this.caller.sessionId;
+      const status = CometChat.CALL_STATUS.REJECTED;
+
+      CometChat.rejectCall(sessionID, status)
+        .then((call) => console.log(call))
+        .catch((error) => console.log("Their was an error: ", error));
     },
     toReadableString(time) {
       if (time < 0) time = 0;

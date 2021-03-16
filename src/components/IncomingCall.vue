@@ -6,13 +6,13 @@
     <h4>Nancy Dean Calling</h4>
     <div class="call-icons">
       <PhoneIcon
-        @click="onAccept()"
+        @click="accept()"
         class="call-icon call-accept"
         :size="20"
         fillColor="#ffffff"
       />
       <PhoneHangupIcon
-        @click="onReject()"
+        @click="reject()"
         class="call-icon call-reject"
         :size="20"
         fillColor="#ffffff"
@@ -37,12 +37,12 @@ export default {
     },
   },
   methods: {
-    onAccept() {
-      console.log('call accepted');
+    accept() {
+      this.$emit('accept')
     },
-    onReject() {
-      console.log('call rejected');
-    },
+    reject() {
+      this.$emit('reject')
+    }
   },
   components: {
     PhoneIcon,
