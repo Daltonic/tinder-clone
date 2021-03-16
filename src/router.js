@@ -13,15 +13,21 @@ const routes = [
   {
     path: '/profile',
     component: () => import(/* webpackChunkName: "profile" */ './views/Profile.vue'),
-    name: 'Profile',
+    name: 'profile',
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/all/chats',
+    component: () => import(/* webpackChunkName: "all_chats" */ './views/All.vue'),
+    name: 'all',
+    meta: { requiresAuth: true, requiresProfile: true }
   },
   {
     path: '/chats/:uid',
     component: () => import(/* webpackChunkName: "chats" */ './views/Chats.vue'),
-    name: 'chats',
-    props: true,
-    meta: { requiresAuth: true }
+    name: 'chat',
+    prop: true,
+    meta: { requiresAuth: true, requiresProfile: true }
   },
   {
     path: '/login',

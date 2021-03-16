@@ -74,17 +74,13 @@
       </div>
     </div>
     <SideBar />
-    <CometChatIncomingCall :incomingCall="caller" />
-    <CometChatOutgoingCall :outgoingCall="caller" />
   </div>
 </template>
 
 <script>
 import { CometChat } from "@cometchat-pro/chat";
 import {
-  CometChatAvatar,
-  CometChatOutgoingCall,
-  CometChatIncomingCall,
+  CometChatAvatar
 } from "../cometchat-pro-vue-ui-kit";
 import VideoIcon from "vue-material-design-icons/Video.vue";
 import PhoneIcon from "vue-material-design-icons/Phone.vue";
@@ -115,8 +111,6 @@ export default {
   components: {
     SideBar,
     CometChatAvatar,
-    CometChatOutgoingCall,
-    CometChatIncomingCall,
     VideoIcon,
     PhoneIcon,
   },
@@ -124,7 +118,6 @@ export default {
     this.getMessages();
     this.getUser();
     this.listenForMessage();
-    this.listenForCall();
   },
   methods: {
     getUser() {
@@ -178,62 +171,6 @@ export default {
         })
       );
     },
-    initiateAudioCall() {
-      const receiverID = this.uid;
-      const callType = CometChat.CALL_TYPE.AUDIO;
-      const receiverType = CometChat.RECEIVER_TYPE.USER;
-
-      const call = new CometChat.Call(receiverID, callType, receiverType);
-
-      CometChat.initiateCall(call)
-        .then((caller) => {
-          this.caller = caller;
-          console.log(caller);
-        })
-        .catch((error) =>
-          console.log("Call initialization failed with exception:", error)
-        );
-    },
-    listenForCall() {
-      const listnerID = this.uid;
-      CometChat.addCallListener(
-        listnerID,
-        new CometChat.CallListener({
-          onIncomingCallReceived(call) {
-            // this.hasCall = true;
-            console.log("Incoming call:", call);
-          },
-          onOutgoingCallAccepted(call) {
-            console.log("Outgoing call accepted:", call);
-            // Outgoing Call Accepted
-          },
-          onOutgoingCallRejected(call) {
-            console.log("Outgoing call rejected:", call);
-            // Outgoing Call Rejected
-          },
-          onIncomingCallCancelled(call) {
-            console.log("Incoming call calcelled:", call);
-            this.onReject("incoming");
-          },
-        })
-      );
-    },
-    onAccept() {
-      const sessionID = this.caller.sessionId;
-      const status = CometChat.CALL_STATUS.REJECTED;
-
-      CometChat.rejectCall(sessionID, status)
-        .then((call) => console.log(call))
-        .catch((error) => console.log("Their was an error: ", error));
-    },
-    onReject() {
-      const sessionID = this.caller.sessionId;
-      const status = CometChat.CALL_STATUS.REJECTED;
-
-      CometChat.rejectCall(sessionID, status)
-        .then((call) => console.log(call))
-        .catch((error) => console.log("Their was an error: ", error));
-    },
     toReadableString(time) {
       if (time < 0) time = 0;
       let hrs = ~~((time / 3600) % 24),
@@ -243,11 +180,6 @@ export default {
       if (hrs == 0) hrs = 12;
       if (mins < 10) mins = "0" + mins;
       return hrs + ":" + mins + timeType;
-    },
-  },
-  computed: {
-    themeValue() {
-      return Object.assign({}, theme, this.theme);
     },
   },
 };
