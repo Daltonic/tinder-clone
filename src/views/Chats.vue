@@ -74,13 +74,18 @@
       </div>
     </div>
     <SideBar />
-    <CometChatOutgoingCall :type="'audio'" :outgoingCall="caller" />
+    <CometChatIncomingCall :incomingCall="caller" />
+    <CometChatOutgoingCall :outgoingCall="caller" />
   </div>
 </template>
 
 <script>
 import { CometChat } from "@cometchat-pro/chat";
-import { CometChatAvatar, CometChatOutgoingCall } from "../cometchat-pro-vue-ui-kit";
+import {
+  CometChatAvatar,
+  CometChatOutgoingCall,
+  CometChatIncomingCall,
+} from "../cometchat-pro-vue-ui-kit";
 import VideoIcon from "vue-material-design-icons/Video.vue";
 import PhoneIcon from "vue-material-design-icons/Phone.vue";
 import SideBar from "../shared/SideBar";
@@ -90,6 +95,13 @@ export default {
     uid: {
       type: String,
       required: true,
+    },
+    theme: {
+      type: Object,
+      required: false,
+      default: function () {
+        return {};
+      },
     },
   },
   data() {
@@ -104,6 +116,7 @@ export default {
     SideBar,
     CometChatAvatar,
     CometChatOutgoingCall,
+    CometChatIncomingCall,
     VideoIcon,
     PhoneIcon,
   },
@@ -230,6 +243,11 @@ export default {
       if (hrs == 0) hrs = 12;
       if (mins < 10) mins = "0" + mins;
       return hrs + ":" + mins + timeType;
+    },
+  },
+  computed: {
+    themeValue() {
+      return Object.assign({}, theme, this.theme);
     },
   },
 };
