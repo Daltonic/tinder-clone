@@ -13,10 +13,7 @@
                 <small>{{ user.status }}</small>
               </div>
             </div>
-            <div class="msger__options">
-              <PhoneIcon :size="30" @click="initiateAudioCall()" />
-              <VideoIcon :size="30" />
-            </div>
+            <div class="msger__options"></div>
           </header>
 
           <main class="msger-chat">
@@ -79,11 +76,7 @@
 
 <script>
 import { CometChat } from "@cometchat-pro/chat";
-import {
-  CometChatAvatar
-} from "../cometchat-pro-vue-ui-kit";
-import VideoIcon from "vue-material-design-icons/Video.vue";
-import PhoneIcon from "vue-material-design-icons/Phone.vue";
+import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
 import SideBar from "../shared/SideBar";
 export default {
   name: "chats",
@@ -92,27 +85,17 @@ export default {
       type: String,
       required: true,
     },
-    theme: {
-      type: Object,
-      required: false,
-      default: function () {
-        return {};
-      },
-    },
   },
   data() {
     return {
       messages: [],
       message: "",
       user: {},
-      caller: {},
     };
   },
   components: {
     SideBar,
     CometChatAvatar,
-    VideoIcon,
-    PhoneIcon,
   },
   created() {
     this.getMessages();

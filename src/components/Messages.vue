@@ -1,7 +1,12 @@
 <template>
   <div class="sidebar__messages">
-    <h4 class="message__title">{{title}}</h4>
-    <router-link :to="'/chats/' + user.uid" v-for="user in users" :key="user.uid" class="sidebar__message">
+    <h4 class="message__title">{{ title }}</h4>
+    <router-link
+      :to="'/chats/' + user.uid"
+      v-for="user in users"
+      :key="user.uid"
+      :class="[uid == user.uid ? 'active' : '',  'sidebar__message']"
+    >
       <div class="message__left">
         <CometChatAvatar :image="user.avatar" />
         <CometChatUserPresence :status="user.status" />
@@ -24,7 +29,7 @@ import {
 export default {
   name: "messages",
   props: {
-    title: {type: String, default: "Messages"},
+    title: { type: String, default: "Messages" },
     users: {
       type: [Object, Array],
       default: function () {
@@ -44,6 +49,11 @@ export default {
     CometChatAvatar,
     CometChatUserPresence,
   },
+  computed: {
+    uid() {
+      return this.$route.params.uid;
+    },
+  },
 };
 </script>
 
@@ -61,6 +71,11 @@ export default {
 
 .sidebar__messages a:hover {
   background: #f9f9ff;
+  transition: 0.5s;
+}
+
+.active {
+  background: #ececff;
   transition: 0.5s;
 }
 

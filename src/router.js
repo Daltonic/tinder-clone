@@ -17,16 +17,16 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/all/chats',
-    component: () => import(/* webpackChunkName: "all_chats" */ './views/All.vue'),
-    name: 'all',
+    path: '/friends',
+    component: () => import(/* webpackChunkName: "friends" */ './views/Friends.vue'),
+    name: 'friends',
     meta: { requiresAuth: true, requiresProfile: true }
   },
   {
     path: '/chats/:uid',
     component: () => import(/* webpackChunkName: "chats" */ './views/Chats.vue'),
     name: 'chat',
-    prop: true,
+    props: true,
     meta: { requiresAuth: true, requiresProfile: true }
   },
   {

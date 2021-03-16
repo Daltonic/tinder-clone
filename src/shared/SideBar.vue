@@ -8,20 +8,13 @@
         <router-link to="/profile" :title="name">My Profile</router-link>
       </div>
       <div class="header__right">
-        <AccountArrowRightIcon
-          v-if="!seeFav"
-          class="header__icon"
-          :size="30"
-          fillColor="#ffffff"
-          @click="seeFav = !seeFav"
-        />
-        <AccountArrowLeftIcon
-          v-else
-          class="header__icon"
-          :size="30"
-          fillColor="#ffffff"
-          @click="seeFav = !seeFav"
-        />
+        <router-link to="/friends" title="Users">
+          <AccountGroupIcon
+            class="header__icon"
+            :size="30"
+            fillColor="#ffffff"
+          />
+        </router-link>
       </div>
     </div>
     <div class="sidebar__search">
@@ -46,12 +39,7 @@
       </div>
     </div>
 
-    <Messages
-      v-if="!seeFav"
-      :users="isSearching ? results : matched"
-      title="Matched"
-    />
-    <Messages v-else :users="favorites" title="Favorites" />
+    <Messages :users="isSearching ? results : matched" title="Matched" />
 
     <button class="logout__btn" @click="logOut" type="submit">
       <span></span>
@@ -67,8 +55,7 @@
 import { CometChat } from "@cometchat-pro/chat";
 import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
 import Messages from "../components/Messages";
-import AccountArrowLeftIcon from "vue-material-design-icons/AccountArrowLeft.vue";
-import AccountArrowRightIcon from "vue-material-design-icons/AccountArrowRight.vue";
+import AccountGroupIcon from "vue-material-design-icons/AccountGroup.vue";
 import CardsIcon from "vue-material-design-icons/Cards.vue";
 import { auth } from "../firebase";
 export default {
@@ -130,15 +117,13 @@ export default {
   components: {
     Messages,
     CometChatAvatar,
-    AccountArrowLeftIcon,
     CardsIcon,
-    AccountArrowRightIcon,
+    AccountGroupIcon,
   },
   watch: {
     keyword() {
       if (this.keyword.length != "") {
         this.isSearching = true;
-        this.seeFav = false;
         this.results = this.matched.filter(
           (user) => user.name.indexOf(this.keyword) !== -1
         );
