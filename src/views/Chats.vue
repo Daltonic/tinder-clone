@@ -13,7 +13,12 @@
                 <small>{{ user.status }}</small>
               </div>
             </div>
-            <div class="msger__options"></div>
+            <div class="msger__options">
+              <router-link to="/">
+                <ArrowLeftBoldIcon title="Back Home" fillColor="#989898" :size="30" />
+              </router-link>
+              <PowerIcon @click="logOut()" title="Logout" fillColor="#989898" :size="30" />
+            </div>
           </header>
 
           <main class="msger-chat">
@@ -75,8 +80,11 @@
 </template>
 
 <script>
+import { auth } from "../firebase";
 import { CometChat } from "@cometchat-pro/chat";
 import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
+import ArrowLeftBoldIcon from "vue-material-design-icons/ArrowLeftBold.vue";
+import PowerIcon from "vue-material-design-icons/Power.vue";
 import SideBar from "../shared/SideBar";
 export default {
   name: "chats",
@@ -96,6 +104,8 @@ export default {
   components: {
     SideBar,
     CometChatAvatar,
+    ArrowLeftBoldIcon,
+    PowerIcon
   },
   created() {
     this.getMessages();
@@ -103,6 +113,12 @@ export default {
     this.listenForMessage();
   },
   methods: {
+    logOut() {
+      auth
+        .signOut()
+        .catch((error) => console.log(error.message))
+        .finally(() => this.$router.push({ name: "login" }));
+    },
     getUser() {
       const uid = this.uid;
       CometChat.getUser(uid)
@@ -359,7 +375,7 @@ body {
 }
 
 .msger__options span {
-  margin: 0 10px;
+  margin: 0 5px;
   cursor: pointer;
 }
 

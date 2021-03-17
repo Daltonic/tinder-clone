@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isLoggedIn" class="sidebar">
+  <div class="sidebar">
     <div class="sidebar__header">
       <div class="header__left">
         <div class="sidebar__avatar">
@@ -46,7 +46,7 @@
       <span></span>
       <span></span>
       <span></span>
-      Logout
+      🔥 Logout
     </button>
   </div>
 </template>
@@ -62,10 +62,8 @@ export default {
   name: "sidebar",
   data() {
     return {
-      isLoggedIn: false,
       avatar: "",
       name: "",
-      seeFav: false,
       matched: [],
       favorites: [],
       results: [],
@@ -76,12 +74,9 @@ export default {
   created() {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        this.isLoggedIn = true;
         this.avatar = user.photoURL;
         this.name = user.displayName;
         this.getUser();
-      } else {
-        this.isLoggedIn = false;
       }
     });
   },
@@ -109,7 +104,6 @@ export default {
     logOut() {
       auth
         .signOut()
-        .then(() => (this.isLoggedIn = false))
         .catch((error) => console.log(error.message))
         .finally(() => this.$router.push({ name: "login" }));
     },

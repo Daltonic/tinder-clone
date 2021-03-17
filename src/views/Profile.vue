@@ -109,21 +109,12 @@ export default {
       .finally(() => this.requesting = false);
     },
   },
-  //   computed: {
-  //     validated() {
-  //       return (
-  //         this.form.fullname.length >= 5 &&
-  //         this.form.avatar.length >= 10 &&
-  //         this.form.description.length >= 10
-  //       );
-  //     },
-  //   },
 };
 </script>
 
-<style scoped>
+<style>
 html {
-  background: linear-gradient(#e90d77, #f15f59);
+  background-color: #e90d77;
 }
 
 .content {

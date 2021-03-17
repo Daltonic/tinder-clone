@@ -53,6 +53,12 @@
           @click="onRequest()"
           v-else
         />
+        <PowerIcon
+          :size="30"
+          fillColor="#ec5e6f"
+          class="swipe__icon swipe__icon__power"
+          @click="logOut()"
+        />
       </div>
     </div>
   </div>
@@ -63,6 +69,7 @@ import { auth } from "../firebase";
 import { CometChat } from "@cometchat-pro/chat";
 import VueSwing from "vue-swing";
 import CloseIcon from "vue-material-design-icons/Close.vue";
+import PowerIcon from "vue-material-design-icons/Power.vue";
 import StarIcon from "vue-material-design-icons/Star.vue";
 import StarOutlineIcon from "vue-material-design-icons/StarOutline.vue";
 import HeartIcon from "vue-material-design-icons/Heart.vue";
@@ -98,25 +105,31 @@ export default {
   },
   created() {
     this.getUser();
-
   },
   components: {
     VueSwing,
     CloseIcon,
+    PowerIcon,
     StarIcon,
     StarOutlineIcon,
     HeartIcon,
     HeartOutlineIcon,
   },
   methods: {
+    logOut() {
+      auth
+        .signOut()
+        .catch((error) => console.log(error.message))
+        .finally(() => this.$router.push({ name: "login" }));
+    },
     reject() {
-      this.swipped(this.currentCard)
+      this.swipped(this.currentCard);
     },
     swipped(user) {
       const index = this.users.findIndex((u) => u.uid == user.uid);
       this.users.splice(index, 1);
-      user.id = Date.now() + ((Math.random()*100000).toFixed())
-      this.users.unshift({...user})
+      user.id = Date.now() + (Math.random() * 100000).toFixed();
+      this.users.unshift({ ...user });
     },
     getUser() {
       const uid = auth.currentUser.uid;
@@ -128,7 +141,7 @@ export default {
         .catch((error) => console.log(error));
     },
     onRequest() {
-      const data = {...this.currentCard};
+      const data = { ...this.currentCard };
       const apiKey = process.env.VUE_APP_KEY;
       const uid = auth.currentUser.uid;
 
@@ -140,14 +153,18 @@ export default {
       }
 
       const user = new CometChat.User(uid);
-      user.setMetadata({ ...data.metadata, favorites: this.favorites, requests: this.requests });
+      user.setMetadata({
+        ...data.metadata,
+        favorites: this.favorites,
+        requests: this.requests,
+      });
 
       CometChat.updateUser(user, apiKey)
         .then(() => console.log(user))
         .catch((error) => console.log(error));
     },
     onFavorite() {
-      const data = {...this.currentCard};
+      const data = { ...this.currentCard };
       const apiKey = process.env.VUE_APP_KEY;
       const uid = auth.currentUser.uid;
 
@@ -159,7 +176,11 @@ export default {
       }
 
       const user = new CometChat.User(uid);
-      user.setMetadata({ ...data.metadata, favorites: this.favorites, requests: this.requests });
+      user.setMetadata({
+        ...data.metadata,
+        favorites: this.favorites,
+        requests: this.requests,
+      });
 
       CometChat.updateUser(user, apiKey)
         .then(() => console.log(user))
@@ -247,5 +268,11 @@ export default {
   box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.2) !important;
   border-radius: 30px;
   padding: 10px;
+}
+
+@media only screen and (min-width: 768px) {
+  .swipe__icon__power {
+    display: none;
+  }
 }
 </style>

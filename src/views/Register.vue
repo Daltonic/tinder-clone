@@ -83,9 +83,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 html {
-  background: linear-gradient(#e90d77, #f15f59);
+  background-color: #e90d77;
 }
 
 .content {
