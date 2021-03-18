@@ -46,8 +46,7 @@ export default {
       email: "",
       password: "",
       fullname: "",
-    },
-    temp: null,
+    }
   }),
 
   methods: {
@@ -72,10 +71,7 @@ export default {
       user.setName(this.form.fullname);
 
       CometChat.createUser(user, apiKey)
-        .then(() => {
-          CometChat.login(uid, apiKey)
-          .then(() =>this.$router.push({ name: "home" }));
-        })
+        .then(() => this.$router.push({ name: "login" }))
         .catch((error) => console.log("error", error))
         .finally(() => (this.requesting = false));
     },
