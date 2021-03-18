@@ -59,11 +59,11 @@ export default {
             .updateProfile({
               displayName: this.form.fullname,
             })
-            .then(() => this.signInWithCometChat(res.user.uid));
+            .then(() => this.signUpWithCometChat(res.user.uid));
         })
         .catch((error) => console.log(error));
     },
-    signInWithCometChat(uid) {
+    signUpWithCometChat(uid) {
       const apiKey = process.env.VUE_APP_KEY;
 
       const user = new CometChat.User(uid);

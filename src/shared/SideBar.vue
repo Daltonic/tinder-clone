@@ -9,7 +9,7 @@
       </div>
       <div class="header__right">
         <router-link to="/friends" title="Users">
-          <AccountGroupIcon
+          <AccountHeartIcon
             class="header__icon"
             :size="30"
             fillColor="#ffffff"
@@ -55,7 +55,7 @@
 import { CometChat } from "@cometchat-pro/chat";
 import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
 import Messages from "../components/Messages";
-import AccountGroupIcon from "vue-material-design-icons/AccountGroup.vue";
+import AccountHeartIcon from "vue-material-design-icons/AccountHeart.vue";
 import CardsIcon from "vue-material-design-icons/Cards.vue";
 import { auth } from "../firebase";
 export default {
@@ -112,7 +112,7 @@ export default {
     Messages,
     CometChatAvatar,
     CardsIcon,
-    AccountGroupIcon,
+    AccountHeartIcon,
   },
   watch: {
     keyword() {
@@ -137,7 +137,7 @@ export default {
   float: right;
   overflow: hidden;
   background: #fff;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .sidebar__header {

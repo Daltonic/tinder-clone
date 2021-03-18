@@ -13,51 +13,50 @@
                 <small>{{ user.status }}</small>
               </div>
             </div>
-            <div class="msger__options">
-              <router-link to="/">
-                <ArrowLeftBoldIcon title="Back Home" fillColor="#989898" :size="30" />
-              </router-link>
-              <PowerIcon @click="logOut()" title="Logout" fillColor="#989898" :size="30" />
-            </div>
           </header>
 
           <main class="msger-chat">
             <div v-for="message in messages" :key="message.sentAt">
-              <div v-if="message.receiverId !== user.uid" class="msg left-msg">
-                <CometChatAvatar
-                  :image="user.avatar"
-                  class="msg-img"
-                  style="width: 50px; height: 50px"
-                />
+              <div v-if="typeof message.text != 'undefined'">
+                <div
+                  v-if="message.receiverId !== user.uid"
+                  class="msg left-msg"
+                >
+                  <CometChatAvatar
+                    :image="user.avatar"
+                    class="msg-img"
+                    style="width: 50px; height: 50px"
+                  />
 
-                <div class="msg-bubble">
-                  <div class="msg-info">
-                    <div class="msg-info-name">{{ user.name }}</div>
-                    <div class="msg-info-time">
-                      {{ toReadableString(message.sentAt) }}
+                  <div class="msg-bubble">
+                    <div class="msg-info">
+                      <div class="msg-info-name">{{ user.name }}</div>
+                      <div class="msg-info-time">
+                        {{ toReadableString(message.sentAt) }}
+                      </div>
                     </div>
-                  </div>
 
-                  <div class="msg-text">{{ message.text }}</div>
+                    <div class="msg-text">{{ message.text }}</div>
+                  </div>
                 </div>
-              </div>
 
-              <div v-else class="msg right-msg">
-                <CometChatAvatar
-                  :image="message.sender.avatar"
-                  class="msg-img"
-                  style="width: 50px; height: 50px"
-                />
+                <div v-else class="msg right-msg">
+                  <CometChatAvatar
+                    :image="message.sender.avatar"
+                    class="msg-img"
+                    style="width: 50px; height: 50px"
+                  />
 
-                <div class="msg-bubble">
-                  <div class="msg-info">
-                    <div class="msg-info-name">{{ message.sender.name }}</div>
-                    <div class="msg-info-time">
-                      {{ toReadableString(message.sentAt) }}
+                  <div class="msg-bubble">
+                    <div class="msg-info">
+                      <div class="msg-info-name">{{ message.sender.name }}</div>
+                      <div class="msg-info-time">
+                        {{ toReadableString(message.sentAt) }}
+                      </div>
                     </div>
-                  </div>
 
-                  <div class="msg-text">{{ message.text }}</div>
+                    <div class="msg-text">{{ message.text }}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -80,11 +79,8 @@
 </template>
 
 <script>
-import { auth } from "../firebase";
 import { CometChat } from "@cometchat-pro/chat";
 import { CometChatAvatar } from "../cometchat-pro-vue-ui-kit";
-import ArrowLeftBoldIcon from "vue-material-design-icons/ArrowLeftBold.vue";
-import PowerIcon from "vue-material-design-icons/Power.vue";
 import SideBar from "../shared/SideBar";
 export default {
   name: "chats",
@@ -104,8 +100,6 @@ export default {
   components: {
     SideBar,
     CometChatAvatar,
-    ArrowLeftBoldIcon,
-    PowerIcon
   },
   created() {
     this.getMessages();
@@ -113,12 +107,6 @@ export default {
     this.listenForMessage();
   },
   methods: {
-    logOut() {
-      auth
-        .signOut()
-        .catch((error) => console.log(error.message))
-        .finally(() => this.$router.push({ name: "login" }));
-    },
     getUser() {
       const uid = this.uid;
       CometChat.getUser(uid)

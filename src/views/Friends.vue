@@ -1,23 +1,18 @@
 <template>
-  <CometChatUserListWithMessages :key="id" />
+  <CometChatUserListWithMessages />
 </template>
 
 <script>
 import { CometChatUserListWithMessages } from "../cometchat-pro-vue-ui-kit";
 export default {
   name: "friends",
-  data() {
-    return {
-      id: Date.now() + (Math.random() * 100000).toFixed()
-    }
-  },
   components: {
     CometChatUserListWithMessages,
   },
 };
 </script>
 
-<style scope>
+<style>
 html {
   background-color: #ffffff;
 }

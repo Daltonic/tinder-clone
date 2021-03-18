@@ -60,7 +60,7 @@ export default {
 <style scoped>
 .sidebar__messages {
   padding: 20px 10px;
-  height: calc(100vh - 250px);
+  height: calc(100vh - 300px);
   overflow-y: scroll;
 }
 
