@@ -61,7 +61,8 @@ export default {
             })
             .then(() => this.signUpWithCometChat(res.user.uid));
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => (this.requesting = false));
     },
     signUpWithCometChat(uid) {
       const apiKey = process.env.VUE_APP_KEY;

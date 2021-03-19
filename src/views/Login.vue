@@ -48,7 +48,8 @@ export default {
       auth
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then((res) => this.loginCometChat(res.user.uid))
-        .catch((error) => console.log(error))
+        .catch((error) => {console.log(error)})
+        .finally(() => this.requesting = false)
     },
     loginCometChat(uid) {
       const apiKey = process.env.VUE_APP_KEY;

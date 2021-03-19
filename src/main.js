@@ -17,7 +17,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
   
-  if (requiresProfile && !(auth.currentUser.photoURL != null)) {
+  if (requiresProfile && ((auth.currentUser?.photoURL || null) == null)) {
     console.log('You must first complete your profile.')
     next('profile')
   } else {
