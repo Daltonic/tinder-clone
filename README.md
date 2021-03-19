@@ -6,7 +6,20 @@ Read the full tutorial here:
 
 This example shows How To Build a Dating site chat with VueJs:
 
-<SCREENSHOT - PLEASE ENSURE SCREENSHOTS LIVE IN A /screenshots FOLDER>
+![Tinder Clone Login Screen](./screenshots/1.png)
+<figcaption>Tinder Clone Login Screen</figcaption>
+
+
+![Tinder Clone Home Screen](./screenshots/2.png)
+<figcaption>Tinder Clone Home Screen</figcaption>
+
+
+![Tinder Clone Chat Screen](./screenshots/3.png)
+<figcaption>Tinder Clone Chat Screen</figcaption>
+
+![Tinder Clone Call Screen](./screenshots/4.png)
+<figcaption>Tinder Clone Call Screen</figcaption>
+
 
 ## Technology
 This demo uses:
