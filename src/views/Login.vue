@@ -17,6 +17,9 @@
           >Forget Password</router-link
         >
       </div>
+      <div class="user__box" style="margin-top: 10px; cursor: pointer;">
+        <p @click="guestAccount" class="forget__link">Guest Account</p>
+      </div>
 
       <button type="submit">
         <span></span>
@@ -48,8 +51,10 @@ export default {
       auth
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then((res) => this.loginCometChat(res.user.uid))
-        .catch((error) => {console.log(error)})
-        .finally(() => this.requesting = false)
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => (this.requesting = false));
     },
     loginCometChat(uid) {
       const apiKey = process.env.VUE_APP_KEY;
@@ -57,7 +62,12 @@ export default {
         .then(() => this.$router.push({ name: "home" }))
         .catch((error) => console.log(error))
         .finally(() => (this.requesting = false));
-    }
+    },
+    guestAccount() {
+      this.form.email = "lucy@me.com";
+      this.form.password = "123456";
+      this.onSubmit();
+    },
   },
 };
 </script>
