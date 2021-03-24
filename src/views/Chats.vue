@@ -26,18 +26,48 @@
                   v-if="message.receiverId !== user.uid"
                   class="msg left-msg"
                 >
-                  <CometChatAvatar
-                    :image="user.avatar"
-                    class="msg-img"
-                    style="width: 50px; height: 50px"
-                  />
+                  <div class="msg--wrapper">
+                    <div class="bubble--wrapper">
+                      <CometChatAvatar
+                        :image="user.avatar"
+                        class="msg-img"
+                        style="width: 50px; height: 50px"
+                      />
 
-                  <div class="msg-bubble">
-                    <div class="msg-info">
-                      <div class="msg-info-name">{{ user.name }}</div>
+                      <div class="msg-bubble">
+                        <div class="msg-info">
+                          <div class="msg-info-name">{{ user.name }}</div>
+                        </div>
+
+                        <div class="msg-text">{{ message.text }}</div>
+                      </div>
                     </div>
 
-                    <div class="msg-text">{{ message.text }}</div>
+                    <div class="msg-info-time">
+                      {{ toReadableString(message.sentAt) }}
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="msg right-msg">
+                  <div class="msg--wrapper">
+                    <div class="bubble--wrapper">
+                      <CometChatAvatar
+                        :image="message.sender.avatar"
+                        class="msg-img"
+                        style="width: 50px; height: 50px"
+                      />
+
+                      <div class="msg-bubble">
+                        <div class="msg-info">
+                          <div class="msg-info-name">
+                            {{ message.sender.name }}
+                          </div>
+                        </div>
+
+                        <div class="msg-text">{{ message.text }}</div>
+                      </div>
+                    </div>
                     <div class="msg-info-time">
                       <img
                         v-if="
@@ -70,25 +100,6 @@
 
                       {{ toReadableString(message.sentAt) }}
                     </div>
-                  </div>
-                </div>
-
-                <div v-else class="msg right-msg">
-                  <CometChatAvatar
-                    :image="message.sender.avatar"
-                    class="msg-img"
-                    style="width: 50px; height: 50px"
-                  />
-
-                  <div class="msg-bubble">
-                    <div class="msg-info">
-                      <div class="msg-info-name">{{ message.sender.name }}</div>
-                    </div>
-
-                    <div class="msg-text">{{ message.text }}</div>
-                    <div class="msg-info-time">
-                        {{ toReadableString(message.sentAt) }}
-                      </div>
                   </div>
                 </div>
               </div>
@@ -410,6 +421,19 @@ body {
 .msger__options span {
   margin: 0 5px;
   cursor: pointer;
+}
+
+.right-msg .bubble--wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row-reverse;
+}
+
+.left-msg .bubble--wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media only screen and (max-width: 768px) {
