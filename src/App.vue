@@ -1,17 +1,12 @@
 <template>
   <div id="app">
-    <router-view :key="id"/>
+    <router-view :key="$route.path"/>
   </div>
 </template>
 
 <script>
 export default {
   name: "app",
-  data() {
-    return {
-      id: Date.now() + (Math.random() * 100000).toFixed()
-    }
-  },
 };
 </script>
 <style>

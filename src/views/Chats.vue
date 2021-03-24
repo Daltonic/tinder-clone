@@ -16,7 +16,11 @@
           </header>
 
           <main class="msger-chat">
-            <div v-for="message in messages" :key="message.sentAt">
+            <div
+              class="msg-list"
+              v-for="message in messages"
+              :key="message.sentAt"
+            >
               <div v-if="typeof message.text != 'undefined'">
                 <div
                   v-if="message.receiverId !== user.uid"
@@ -31,12 +35,41 @@
                   <div class="msg-bubble">
                     <div class="msg-info">
                       <div class="msg-info-name">{{ user.name }}</div>
-                      <div class="msg-info-time">
-                        {{ toReadableString(message.sentAt) }}
-                      </div>
                     </div>
 
                     <div class="msg-text">{{ message.text }}</div>
+                    <div class="msg-info-time">
+                      <img
+                        v-if="
+                          message.sentAt &&
+                          !message.deliveredAt &&
+                          !message.readAt
+                        "
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAAXNSR0IArs4c6QAAARdJREFUOBFjYEAGIiIiUQg+kBeB4EFZYmJiVnDB////M8I5WBmSkpImIAkmmCxQy0MYmwFogxGcQxYDaEIaTCPcKSA3/vv3T56JiYn11atXi2AKBopGdiQLuiNERUU9WVlZD8HEwSElLi4eBZTgcXBwYAGGmOyzZ89uwBTAvQk19p+AgMDiO3fu/IQpQKGBptigCNCFw0ysLSAPfvv2zZ+bm1vo69evj2H64OkFJoCNVlFR4bty5UoCUI6Xj4/vLDY1YDEFBQUOkE3ICiQkJBRAIQhMLAHY0jE8mEGagPFh8ffvXz0g8xMjI+MWFhYWjd+/fxsB2ddev359BNlgGBvFAJgg0DZrYNLUBvHZ2NgOIUcsTM3goQFXzEj1uzh+EwAAAABJRU5ErkJggg=="
+                        alt="time"
+                        class="message__timestamp__img"
+                      />
+
+                      <img
+                        v-else-if="
+                          message.sentAt &&
+                          message.deliveredAt &&
+                          !message.readAt
+                        "
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAAXNSR0IArs4c6QAAAWNJREFUOBFjYEAGEhISosh8BgaQCCNMSFJS0gTGZhARETECYbgAMgOuRUxMzAokwQhUGgGkmYD435s3b1aABBn+///PCMJgDskE0Mg0kCYYDTYGZOG/f//kmZiYWIFGr2NkZAx69erVIpJNp5IGmONgNIpfRUVFPVlZWe//+fNHnoWF5eGzZ89uMImLi0cBJXgcHBxYgD6Qtba2vg3yEUgS5CiwCVDj/gkICCz++PFjND8//9I7d+78RHE10BQbkACMRpGkKYeZkOkgz3379s2fm5tb6OvXr4/R+SjBhG6YiooK34cPH8KAcfyLj49vJVCeHRgIocC4/g3iwwNCQUGBA2QysgHAFK0ACj1gQgkApT0pKSk5ZD5MLdgFwLiw+Pv3rx5Q8BPQ9C3ASNL4/fu3EZB97fXr10eAIWsINMQUxodpBtEoXgDaZg2MRG2QBBsb2yFQZAINdwEargTjg+QGFwAAd+eJSUtUxzMAAAAASUVORK5CYII="
+                        alt="time"
+                        class="message__timestamp__img"
+                      />
+
+                      <img
+                        v-else
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAFo9M/3AAAAAXNSR0IArs4c6QAAAWdJREFUOBHNUrtKA1EQPXeNRUDxgVqLQj7AjWjAwh8QKyvbuIIgVhYWNhYWdhFBkugPpLOwt7CwSEQLrTQI1roB44Os7nhm4YZdCyWg4MDsmTOzM3dm7gXiMlUWN84B9RjrcouyBQOJOMmmqg0mMJ5S0IjhrzfELmpQWzYZdUJEjGpEOv6wZNSKxagMScEYzDHU63RjIgxwzvOGO67+Swm2OYupeN1sSY650DzxSFFjxi3JXcpgxunDQ8tHc2wA6bqPV06h24NT88zoe4h7Bv10D4bqDTwqajAh2aLsqcNiIvin5McbzVUkHTRwwms642BrX/m3BbjLcbZ/RX3i4JnWC/pDwTWLNZWfLhrf0flyBzKoldW2ki3LPG19jBdVDyNvz5j+CFFn8qVyTdZ/ow64uR2+sXXy25SDWa7do62Pfp9tr0yWZIMnb1tObEtiBN7wLk9Y1ahxkK8umUOOUSFdsLyd+W+MTyDvnh60pF/jAAAAAElFTkSuQmCC"
+                        alt="time"
+                        class="message__timestamp__img"
+                      />
+
+                      {{ toReadableString(message.sentAt) }}
+                    </div>
                   </div>
                 </div>
 
@@ -50,12 +83,12 @@
                   <div class="msg-bubble">
                     <div class="msg-info">
                       <div class="msg-info-name">{{ message.sender.name }}</div>
-                      <div class="msg-info-time">
-                        {{ toReadableString(message.sentAt) }}
-                      </div>
                     </div>
 
                     <div class="msg-text">{{ message.text }}</div>
+                    <div class="msg-info-time">
+                        {{ toReadableString(message.sentAt) }}
+                      </div>
                   </div>
                 </div>
               </div>
@@ -255,11 +288,12 @@ body {
 .msg {
   display: flex;
   align-items: flex-end;
-  margin-bottom: 10px;
 }
-.msg:last-of-type {
-  margin: 0;
+
+.msg-list {
+  margin: 10px 0;
 }
+
 .msg-img {
   width: 50px;
   height: 50px;
@@ -288,6 +322,8 @@ body {
 }
 .msg-info-time {
   font-size: 0.85em;
+  display: flex;
+  margin-top: 10px;
 }
 
 .left-msg .msg-bubble {
@@ -307,10 +343,19 @@ body {
   color: #fff;
   border-bottom-right-radius: 0;
 }
+
 .right-msg .msg-img {
   margin: 0 0 0 10px;
 }
 
+.left-msg .msg-bubble {
+  display: inline-block;
+  border-radius: 12px;
+  background-color: rgb(246, 246, 246);
+  padding: 8px 12px;
+  align-self: flex-start;
+  width: auto;
+}
 .msger-inputarea {
   padding: 10px;
   border-top: var(--border);
