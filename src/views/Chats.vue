@@ -150,6 +150,9 @@ export default {
     this.getUser();
     this.listenForMessage();
   },
+  destroyed() {
+    CometChat.removeMessageListener(this.uid)
+  },
   methods: {
     getUser() {
       const uid = this.uid;
@@ -197,8 +200,16 @@ export default {
       CometChat.addMessageListener(
         listenerID,
         new CometChat.MessageListener({
-          onTextMessageReceived: (textMessage) =>
-            this.messages.push(textMessage),
+          onTextMessageReceived: (messageReceipt) => this.messages.push(messageReceipt),
+
+          onMessagesRead: (messageReceipt) => {
+            const messageId = messageReceipt.messageId;
+            const receiverId = messageReceipt.sender.uid;
+            const receiverType = "user";
+            CometChat.markAsRead(messageId, receiverId, receiverType);
+            
+            this.messages.filter(msg => msg.readAt = messageReceipt.readAt)
+          },
 
           onMessagesDelivered: (messageReceipt) => {
             const messageId = messageReceipt.messageId;
@@ -210,14 +221,6 @@ export default {
             this.messages[index] = {...this.messages[index], deliveredAt: messageReceipt.deliveredAt}
           },
 
-          onMessagesRead: (messageReceipt) => {
-            const messageId = messageReceipt.messageId;
-            const receiverId = messageReceipt.sender.uid;
-            const receiverType = "user";
-            CometChat.markAsRead(messageId, receiverId, receiverType);
-            
-            this.messages.filter(msg => msg.readAt = messageReceipt.readAt)
-          },
         })
       );
     },
