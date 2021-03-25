@@ -199,6 +199,25 @@ export default {
         new CometChat.MessageListener({
           onTextMessageReceived: (textMessage) =>
             this.messages.push(textMessage),
+
+          onMessagesDelivered: (messageReceipt) => {
+            const messageId = messageReceipt.messageId;
+            const receiverId = messageReceipt.sender.uid;
+            const receiverType = "user";
+            CometChat.markAsDelivered(messageId, receiverId, receiverType)
+            
+            const index = this.messages.findIndex(msg => msg.id == messageReceipt.messageId)
+            this.messages[index] = {...this.messages[index], deliveredAt: messageReceipt.deliveredAt}
+          },
+
+          onMessagesRead: (messageReceipt) => {
+            const messageId = messageReceipt.messageId;
+            const receiverId = messageReceipt.sender.uid;
+            const receiverType = "user";
+            CometChat.markAsRead(messageId, receiverId, receiverType);
+            
+            this.messages.filter(msg => msg.readAt = messageReceipt.readAt)
+          },
         })
       );
     },
