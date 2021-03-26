@@ -170,10 +170,20 @@ export default {
 
       messagesRequest
         .fetchPrevious()
-        .then((messages) => (this.messages = messages))
-        .catch((error) =>
-          console.log("Message fetching failed with error:", error)
-        );
+        .then((messages) => {
+          messages.map((message, i) => {
+            if (!message.readAt) {
+              const messageId = message.id;
+              const receiverId = message.sender.uid;
+              const receiverType = "user";
+              console.log({ i: i + 1, l: messages.length, r: receiverId, u: this.uid });
+              if (i + 1 === messages.length && receiverId === this.uid)
+                CometChat.markAsRead(messageId, receiverId, receiverType);
+            }
+          });
+          this.messages = messages;
+        })
+        .catch((error) => console.log("Message fetching failed with error:", error));
     },
     sendMessage() {
       const receiverID = this.uid;
@@ -190,9 +200,7 @@ export default {
           this.message = "";
           this.messages.push(message);
         })
-        .catch((error) =>
-          console.log("Message sending failed with error:", error)
-        );
+        .catch((error) => console.log("Message sending failed with error:", error));
     },
     listenForMessage() {
       const listenerID = this.uid;
@@ -200,27 +208,24 @@ export default {
       CometChat.addMessageListener(
         listenerID,
         new CometChat.MessageListener({
-          onTextMessageReceived: (messageReceipt) => this.messages.push(messageReceipt),
+          onTextMessageReceived: (messageReceipt) => {
+            if (this.uid === messageReceipt.sender.uid) {
+              this.messages.push(messageReceipt);
 
-          onMessagesRead: (messageReceipt) => {
-            const messageId = messageReceipt.messageId;
-            const receiverId = messageReceipt.sender.uid;
-            const receiverType = "user";
-            CometChat.markAsRead(messageId, receiverId, receiverType);
-            
-            this.messages.filter(msg => msg.readAt = messageReceipt.readAt)
+              const messageId = messageReceipt.id;
+              const receiverId = messageReceipt.sender.uid;
+              const receiverType = "user";
+              CometChat.markAsRead(messageId, receiverId, receiverType);
+            }
           },
 
           onMessagesDelivered: (messageReceipt) => {
-            const messageId = messageReceipt.messageId;
-            const receiverId = messageReceipt.sender.uid;
-            const receiverType = "user";
-            CometChat.markAsDelivered(messageId, receiverId, receiverType)
-            
-            const index = this.messages.findIndex(msg => msg.id == messageReceipt.messageId)
-            this.messages[index] = {...this.messages[index], deliveredAt: messageReceipt.deliveredAt}
+            this.messages.filter((msg) => (msg.deliveredAt = messageReceipt.deliveredAt));
           },
 
+          onMessagesRead: (messageReceipt) => {
+            this.messages.filter((msg) => (msg.readAt = messageReceipt.readAt));
+          },
         })
       );
     },
