@@ -50,16 +50,23 @@ export default {
       this.requesting = true;
       auth
         .signInWithEmailAndPassword(this.form.email, this.form.password)
-        .then((res) => this.loginCometChat(res.user.uid))
+        .then((res) => this.loginCometChat(res.user))
         .catch((error) => {
           console.log(error);
         })
         .finally(() => (this.requesting = false));
     },
-    loginCometChat(uid) {
+    loginCometChat(user) {
       const apiKey = process.env.VUE_APP_KEY;
-      CometChat.login(uid, apiKey)
-        .then(() => this.$router.push({ name: "home" }))
+
+      CometChat.login(user.uid, apiKey)
+        .then(() => {
+          if (user.photoURL) {
+            this.$router.push({ name: "home" })
+          } else {
+            this.$router.push({ name: "profile" })
+          }
+        })
         .catch((error) => console.log(error))
         .finally(() => (this.requesting = false));
     },

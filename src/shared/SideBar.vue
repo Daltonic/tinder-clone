@@ -104,8 +104,8 @@ export default {
     logOut() {
       auth
         .signOut()
+        .then(() => this.$router.push({ name: "login" }))
         .catch((error) => console.log(error.message))
-        .finally(() => this.$router.push({ name: "login" }));
     },
   },
   components: {
