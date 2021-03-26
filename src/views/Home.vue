@@ -3,7 +3,7 @@
     <div class="content-wrapper">
       <div class="content">
         <MainHeader />
-        <TinderCards :users="swipables" />
+        <TinderCards :uid="uid" :users="swipables" />
       </div>
     </div>
     <SideBar />
@@ -21,15 +21,16 @@ export default {
   data() {
     return {
       swipables: [],
+      uid: "",
     };
   },
   created() {
+    this.uid = auth.currentUser?.uid || "99999";
     this.getUsers();
   },
   methods: {
     getUsers() {
-      const uid = auth.currentUser.uid;
-      CometChat.getUser(uid)
+      CometChat.getUser(this.uid)
         .then(() => {
           let usersRequest = new CometChat.UsersRequestBuilder()
             .setLimit(30)

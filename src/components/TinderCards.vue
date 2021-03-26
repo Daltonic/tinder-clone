@@ -91,6 +91,9 @@ export default {
         ];
       },
     },
+    uid: {
+      type: String
+    }
   },
   data() {
     return {
@@ -132,8 +135,7 @@ export default {
       this.users.unshift({ ...user });
     },
     getUser() {
-      const uid = auth.currentUser.uid;
-      CometChat.getUser(uid)
+      CometChat.getUser(this.uid)
         .then((user) => {
           this.favorites = user.metadata?.favorites || [];
           this.requests = user.metadata?.requests || [];
@@ -143,7 +145,6 @@ export default {
     onRequest() {
       const data = { ...this.currentCard };
       const apiKey = process.env.VUE_APP_KEY;
-      const uid = auth.currentUser.uid;
 
       if (!this.requests.includes(data.uid)) {
         this.requests.push(data.uid);
@@ -152,7 +153,7 @@ export default {
         this.requests.splice(index, 1);
       }
 
-      const user = new CometChat.User(uid);
+      const user = new CometChat.User(this.uid);
       user.setMetadata({
         ...data.metadata,
         favorites: this.favorites,
@@ -166,7 +167,6 @@ export default {
     onFavorite() {
       const data = { ...this.currentCard };
       const apiKey = process.env.VUE_APP_KEY;
-      const uid = auth.currentUser.uid;
 
       if (!this.favorites.includes(data.uid)) {
         this.favorites.push(data.uid);
@@ -175,7 +175,7 @@ export default {
         this.favorites.splice(index, 1);
       }
 
-      const user = new CometChat.User(uid);
+      const user = new CometChat.User(this.uid);
       user.setMetadata({
         ...data.metadata,
         favorites: this.favorites,
