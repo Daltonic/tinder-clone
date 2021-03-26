@@ -15,7 +15,7 @@
             </div>
           </header>
 
-          <main class="msger-chat">
+          <main ref="container" class="msger-chat">
             <div
               class="msg-list"
               v-for="message in messages"
@@ -153,6 +153,9 @@ export default {
   destroyed() {
     CometChat.removeMessageListener(this.uid)
   },
+  updated() {
+    this.scrollToEnd()
+  },
   methods: {
     getUser() {
       const uid = this.uid;
@@ -211,7 +214,7 @@ export default {
           onTextMessageReceived: (messageReceipt) => {
             if (this.uid === messageReceipt.sender.uid) {
               this.messages.push(messageReceipt);
-
+              
               const messageId = messageReceipt.id;
               const receiverId = messageReceipt.sender.uid;
               const receiverType = "user";
@@ -229,6 +232,10 @@ export default {
         })
       );
     },
+    scrollToEnd () {
+      const elmnt = this.$refs.container;
+      elmnt.scrollTop = elmnt.scrollHeight;
+    },
     toReadableString(time) {
       if (time < 0) time = 0;
       let hrs = ~~((time / 3600) % 24),
@@ -240,6 +247,11 @@ export default {
       return hrs + ":" + mins + timeType;
     },
   },
+  watch: {
+    messages() {
+      this.scrollToEnd()
+    }
+  }
 };
 </script>
 
@@ -331,6 +343,7 @@ body {
 .msg-list {
   margin: 10px 0;
 }
+
 
 .msg-img {
   width: 50px;
