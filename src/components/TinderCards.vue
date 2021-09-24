@@ -13,7 +13,7 @@
           :style="{ 'background-image': `url(${user.avatar})` }"
         >
           <div class="card__content">
-            <h3>{{ user.name }}, {{ user.metadata.age }}</h3>
+            <h3>{{ user.name }}</h3>
           </div>
         </div>
       </vue-swing>
